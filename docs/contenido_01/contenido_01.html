@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contenido 1: Funciones escalares y vectoriales</title>
+  <style>
+    .mwh-course {
+      --green: #1A2403;
+      --lime: #C8FF01;
+      --yellow: #FFCE00;
+      --cyan: #00A4B5;
+      --gray: #A7A9AA;
+      --ink: #17210d;
+      --muted: #53604a;
+      --surface: #ffffff;
+      --soft: #f5f7f0;
+      --line: #d9ded1;
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.58;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px;
+      background: var(--surface);
+    }
+    .mwh-course * { box-sizing: border-box; }
+    .mwh-hero {
+      background: var(--green);
+      color: #fff;
+      padding: clamp(28px, 5vw, 56px);
+      border-radius: 8px;
+      border-bottom: 8px solid var(--lime);
+    }
+    .mwh-eyebrow {
+      color: var(--lime);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      margin: 0 0 12px;
+    }
+    .mwh-hero h1 {
+      font-size: clamp(2rem, 4.5vw, 4rem);
+      line-height: 1.05;
+      margin: 0 0 18px;
+    }
+    .mwh-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 20px;
+    }
+    .mwh-meta span, .mwh-tag {
+      display: inline-flex;
+      width: fit-content;
+      border: 1px solid rgba(200,255,1,.45);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: .92rem;
+      font-weight: 700;
+    }
+    .mwh-section {
+      padding: 34px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .mwh-section > h2 {
+      color: var(--green);
+      font-size: clamp(1.45rem, 2.8vw, 2.2rem);
+      margin: 0 0 18px;
+      border-left: 8px solid var(--yellow);
+      padding-left: 14px;
+    }
+    .mwh-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+    }
+    .mwh-grid.two { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+    .mwh-grid.three { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    .mwh-card {
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      margin: 14px 0;
+    }
+    .mwh-card h3 {
+      color: var(--green);
+      margin: 0 0 10px;
+      font-size: 1.25rem;
+    }
+    .mwh-card h4 {
+      color: var(--green);
+      margin: 16px 0 6px;
+      font-size: 1rem;
+    }
+    .mwh-card p, .mwh-card li, .mwh-section p, .mwh-section li {
+      font-size: 1rem;
+    }
+    .mwh-step-list {
+      display: grid;
+      gap: 12px;
+      margin: 12px 0;
+    }
+    .mwh-step {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 12px;
+      align-items: start;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+    }
+    .mwh-step > span {
+      display: inline-grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--lime);
+      color: var(--green);
+      font-weight: 800;
+    }
+    .mwh-step h3, .mwh-step p { margin-top: 0; }
+    .mwh-figure {
+      margin: 24px 0;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .mwh-figure img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 6px;
+    }
+    .mwh-figure figcaption {
+      color: var(--muted);
+      font-size: .95rem;
+      margin-top: 8px;
+    }
+    math.math-inline {
+      font-family: "Cambria Math", "STIX Two Math", serif;
+      font-size: 1.04em;
+      padding: 0 .08em;
+      color: #071000;
+      background: rgba(200,255,1,.16);
+      border-radius: 4px;
+    }
+    math.math-display {
+      display: block;
+      margin: 12px 0;
+      padding: 12px;
+      background: #fff;
+      border-left: 5px solid var(--cyan);
+      overflow-x: auto;
+      font-family: "Cambria Math", "STIX Two Math", serif;
+    }
+    .levels .mini { margin: 0; }
+    @media (max-width: 680px) {
+      .mwh-course { padding: 14px; }
+      .mwh-step { grid-template-columns: 1fr; }
+      .mwh-hero { padding: 26px 20px; }
+    }
+  </style>
+</head>
+<body>
+<section class="mwh-course">
+
+<section class="mwh-hero">
+  <p class="mwh-eyebrow">Análisis Vectorial · Ingeniería de Petróleos</p>
+  <h1>Contenido 1: Funciones escalares y vectoriales</h1>
+  <p>Este contenido abre la ruta de Análisis Vectorial. Antes de estudiar límites, derivadas parciales, gradientes, integrales múltiples o campos vectoriales, el estudiante necesita distinguir con precisión qué tipo de objeto matemático está analizando: una función escalar, una función vectorial, un campo escalar o un campo vectorial. Esta distinción organiza el lenguaje del curso y evita errores de interpretación en los contenidos posteriores.</p>
+  <div class="mwh-meta">
+    <span>RA1</span><span>Semestre 2</span><span>Virtualización para Moodle con Aprendizaje Guiado</span>
+  </div>
+</section>
+
+<section class="mwh-section ">
+  <h2>Resultados de aprendizaje</h2>
+  <article class="mwh-card"><h3>RA1</h3><p>Interpreto los conceptos y técnicas básicas de una función en varias variables y sus derivadas parciales.</p><p>El contenido desarrolla la base conceptual para reconocer funciones escalares y vectoriales, identificar entradas y salidas, leer representaciones y preparar el análisis de dominio, curvas de nivel, límites y derivadas parciales.</p></article>
+</section>
+
+
+<section class="mwh-section ">
+  <h2>Saberes</h2>
+  <div class="mwh-grid three"><article class="mwh-card"><h3>Conceptuales</h3>
+<h4>Saberes</h4><ul><li>Función como relación entre entradas y salidas con regla de correspondencia.</li><li>Variable independiente, variable dependiente, parámetro, vector de entrada y valor de salida.</li><li>Función escalar de una variable, función escalar de varias variables y campo escalar.</li><li>Función vectorial y campo vectorial.</li><li>Diferencia entre cantidad escalar y cantidad vectorial.</li><li>Representaciones verbal, algebraica, tabular, gráfica y contextual.</li><li>Lectura inicial de funciones en dos y tres variables.</li></ul>
+</article><article class="mwh-card"><h3>Procedimentales</h3>
+<h4>Saberes</h4><ul><li>Clasificar una función según el tipo de entrada y el tipo de salida.</li><li>Determinar si una expresión representa una función escalar, una función vectorial, un campo escalar o un campo vectorial.</li><li>Relacionar una expresión matemática con una situación de ingeniería.</li><li>Construir ejemplos propios de funciones escalares y vectoriales.</li><li>Interpretar la salida de una función en términos de unidades, dirección, magnitud o significado físico.</li></ul>
+</article><article class="mwh-card"><h3>Actitudinales</h3>
+<h4>Saberes</h4><ul><li>Reconocer la importancia de la precisión conceptual antes de aplicar procedimientos.</li><li>Comunicar con claridad la interpretación de una función.</li><li>Usar tecnología matemática de manera responsable para explorar, no para reemplazar el razonamiento.</li><li>Aceptar la revisión de pares como apoyo para detectar errores de clasificación e interpretación.</li></ul>
+</article></div>
+</section>
+
+
+<section class="mwh-section ">
+  <h2>Introduccion</h2>
+  <p>En cursos anteriores de cálculo y álgebra, la palabra función pudo aparecer como una regla del tipo y = f(x). En Análisis Vectorial, esa idea se amplía: una función puede depender de dos o tres variables, puede devolver un número, puede devolver un vector, puede describir temperatura, presión, velocidad, desplazamiento, flujo, concentración, energía o trabajo. Por eso, antes de calcular, derivar o integrar, conviene detenerse a preguntar: ¿qué entra?, ¿qué sale?, ¿qué significa la salida?, ¿la salida tiene dirección?, ¿la entrada es un punto, un vector, un parámetro o una trayectoria?</p><p>Este primer contenido no busca memorizar nombres. Busca construir una forma de mirar los objetos matemáticos que aparecerán durante todo el curso. Si el estudiante confunde una función escalar con un campo vectorial, puede seleccionar mal el método, interpretar de forma incorrecta una gráfica o atribuir dirección a una cantidad que no la tiene. En ingeniería, ese error conceptual puede cambiar el sentido de un modelo: no es lo mismo conocer la temperatura en cada punto de una formación geológica que conocer la velocidad de flujo de un fluido en cada punto.</p><p>La ruta completa estudia herramientas para modelar fenómenos que cambian en el espacio. En este contenido se construye el vocabulario inicial; en el siguiente se profundizará en dominio, rango, curvas de nivel y superficies; después se estudiarán límites, continuidad, derivadas parciales, optimización, integrales múltiples y cálculo vectorial.</p>
+</section>
+
+
+<section class="mwh-section ">
+  <h2>Contenido teorico</h2>
+  <article class="mwh-card theory-card"><h3>1. La función como relación entre entrada, regla y salida</h3><p>Una función puede entenderse como una regla que asigna a cada elemento permitido de un conjunto de entradas exactamente un elemento de un conjunto de salidas. Esta idea es sencilla en apariencia, pero en análisis vectorial se vuelve más rica porque las entradas y las salidas pueden tener estructura espacial. En una función de una variable real, como <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="f(x) = x² + 1"><mtext>f(x) = x² + 1</mtext></math>, la entrada es un número real y la salida también es un número real. En una función de dos variables, como <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="f(x, y) = x² + y²"><mtext>f(x, y) = x² + y²</mtext></math>, la entrada es un par ordenado y la salida es un número. En una función vectorial, como <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="r(t) = ⟨cos(t), sin(t), t⟩"><mtext>r(t) = ⟨cos(t), sin(t), t⟩</mtext></math>, la entrada es un parámetro y la salida es un vector de posición en el espacio. En un campo vectorial, como <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="F(x, y) = ⟨-y, x⟩"><mtext>F(x, y) = ⟨-y, x⟩</mtext></math>, cada punto del plano recibe un vector. La regla de correspondencia no se reduce entonces a una fórmula; también incluye el tipo de objeto que se acepta como entrada, las restricciones de uso, las unidades, el contexto y la forma en que debe interpretarse la salida.</p><h4>Ampliacion</h4><p>Para estudiar cálculo de varias variables se requiere reconocer cuatro preguntas básicas. La primera es: ¿cuál es la entrada? Puede ser un número, un par ordenado, una terna, un vector o un parámetro. La segunda es: ¿cuál es la salida? Puede ser un escalar, un vector, una matriz o una descripción geométrica. La tercera es: ¿cuál es el dominio? Es decir, qué entradas hacen que la regla tenga sentido matemático y contextual. La cuarta es: ¿qué representa la salida en el problema? Una misma expresión algebraica puede tener significados diferentes según el fenómeno modelado. Por ejemplo, <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="f(x, y) = x² + y²"><mtext>f(x, y) = x² + y²</mtext></math> puede representar una altura idealizada, una energía potencial, una función de costo, una medida de distancia al origen o una distribución simétrica de intensidad. El cálculo posterior depende de esa interpretación.</p><h4>Conexion con stewart</h4><p>Stewart desarrolla esta ampliación al pasar de la geometría del espacio y los vectores a funciones de varias variables. El enfoque combina representación algebraica, lectura geométrica y uso de ejemplos, lo cual resulta adecuado para una ruta virtual con problemas guiados.</p></article><article class="mwh-card theory-card"><h3>2. Cantidades escalares y cantidades vectoriales</h3><p>Una cantidad escalar se describe mediante un valor numérico asociado a una unidad o magnitud. Temperatura, presión, densidad, concentración, energía, volumen y masa son ejemplos de cantidades escalares cuando se registran como un número en cada punto o en cada instante. Una cantidad vectorial, en cambio, requiere magnitud, dirección y sentido. Velocidad, fuerza, desplazamiento, aceleración y gradiente son ejemplos típicos. En ingeniería, esta distinción es más que terminológica. Si se mide presión en un punto del subsuelo, se obtiene una cantidad escalar; si se estudia la dirección probable de flujo de un fluido, se necesita una cantidad vectorial. La presión puede variar espacialmente y formar un campo escalar; la velocidad del fluido puede variar espacialmente y formar un campo vectorial.</p><h4>Ampliacion</h4><p>La diferencia entre escalar y vector no depende de que aparezcan varias variables. Una función de varias variables puede ser escalar si devuelve un número. Por ejemplo, <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="T(x, y, z)"><mtext>T(x, y, z)</mtext></math> puede representar temperatura en un punto del espacio. La entrada tiene tres coordenadas, pero la salida es una temperatura. Por el contrario, una función de una variable puede ser vectorial si devuelve un vector. Por ejemplo, <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="r(t) = ⟨x(t), y(t), z(t)⟩"><mtext>r(t) = ⟨x(t), y(t), z(t)⟩</mtext></math> describe la posición de una partícula en el espacio según el parámetro t. En este caso, la entrada es un número real, pero la salida es una terna ordenada que representa posición. Una fuente frecuente de error consiste en mirar solo cuántas variables aparecen y no mirar qué tipo de salida produce la función.</p><h4>Criterio de lectura</h4><p>Para clasificar correctamente una función, el estudiante debe mirar simultáneamente entrada, salida y contexto. Si la regla asigna un número a cada punto, se trata de una función escalar de varias variables o de un campo escalar. Si asigna un vector a cada valor del parámetro o a cada punto del espacio, se trata de una función vectorial o de un campo vectorial. La notación ayuda, pero no reemplaza la interpretación.</p></article>
+<figure class="mwh-figure">
+  <img src="assets/contenido_01_infografia_01_mapa_entrada_salida.png" alt="Mapa conceptual que muestra como clasificar funciones segun entrada, salida y tipo de objeto matematico.">
+  <figcaption>Clasificacion entrada-salida: lo vectorial lo define la salida, no la cantidad de variables.</figcaption>
+</figure>
+<article class="mwh-card theory-card"><h3>3. Funciones escalares de varias variables</h3><p>Una función escalar de varias variables toma como entrada dos o más variables y produce como salida un número. Se suele escribir <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="f(x, y)"><mtext>f(x, y)</mtext></math>, <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="f(x, y, z)"><mtext>f(x, y, z)</mtext></math> o, de forma más compacta, <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="f(r)"><mtext>f(r)</mtext></math>, donde r representa un vector de posición. Si <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="f(x, y) = 3x - 2y"><mtext>f(x, y) = 3x - 2y</mtext></math>, cada punto del plano produce un único número. Si <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="f(x, y, z) = x² + y² + z²"><mtext>f(x, y, z) = x² + y² + z²</mtext></math>, cada punto del espacio produce la suma de los cuadrados de sus coordenadas. En términos geométricos, una función <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="f(x, y)"><mtext>f(x, y)</mtext></math> puede representarse como una superficie <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="z = f(x, y)"><mtext>z = f(x, y)</mtext></math>, mientras que una función <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="f(x, y, z)"><mtext>f(x, y, z)</mtext></math> no se grafica de forma directa en el espacio tridimensional usual porque requeriría una cuarta dimensión para mostrar el valor de salida; en ese caso se usan superficies de nivel, cortes, colores, tablas o representaciones alternativas.</p><h4>Aplicacion en ingenieria</h4><p>En ingeniería de petróleos, una función escalar puede representar la presión <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="P(x, y, z)"><mtext>P(x, y, z)</mtext></math> dentro de un yacimiento, la temperatura <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="T(x, y, z)"><mtext>T(x, y, z)</mtext></math>, la porosidad <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="φ(x, y, z)"><mtext>φ(x, y, z)</mtext></math> o una concentración <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="C(x, y, z)"><mtext>C(x, y, z)</mtext></math>. En todos estos casos, cada punto espacial recibe un valor numérico. El valor puede cambiar con el tiempo, por lo que a veces se escribe <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="P(x, y, z, t)"><mtext>P(x, y, z, t)</mtext></math>, pero la salida sigue siendo escalar. Esta escritura permite formular preguntas como: ¿dónde es mayor la presión?, ¿en qué dirección cambia más rápidamente?, ¿qué región supera cierto umbral?, ¿cómo se relaciona la distribución de presión con un posible flujo? Algunas de esas preguntas se responderán más adelante con derivadas parciales, gradiente e integrales.</p><h4>Representacion</h4><p>La representación de una función escalar puede realizarse mediante tablas, mapas de contorno, curvas de nivel, superficies, colores o cortes. Cada representación enfatiza algo distinto. Una tabla ayuda a comparar valores discretos; una superficie muestra cambios globales; una curva de nivel muestra conjuntos de puntos con el mismo valor; un mapa de calor permite identificar regiones de mayor o menor intensidad. En aprendizaje virtual, conviene combinar representaciones porque el estudiante puede comprender una función desde varios lenguajes.</p></article><article class="mwh-card theory-card"><h3>4. Funciones vectoriales y trayectorias parametrizadas</h3><p>Una función vectorial produce como salida un vector. Cuando depende de un parámetro, suele describir una trayectoria, una posición, una velocidad o una aceleración. Por ejemplo, <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="r(t) = ⟨2t, t², 1 - t⟩"><mtext>r(t) = ⟨2t, t², 1 - t⟩</mtext></math> asigna a cada valor de t un punto o vector de posición en el espacio. La variable t puede representar tiempo, profundidad, longitud recorrida o simplemente un parámetro geométrico. Lo importante es que la salida no es un solo número, sino una colección ordenada de componentes. Cada componente puede analizarse como una función escalar del parámetro, pero el objeto completo tiene interpretación vectorial.</p><h4>Aplicacion en ingenieria</h4><p>En un contexto de perforación o trayectoria de pozo, una curva parametrizada puede representar la posición del taladro o de una trayectoria idealizada en el subsuelo. El parámetro puede ser longitud medida, tiempo de operación o profundidad. La función vectorial permite describir cómo cambian simultáneamente las coordenadas. Si se añade una función escalar sobre esa trayectoria, por ejemplo presión <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="P(r(t))"><mtext>P(r(t))</mtext></math>, se obtiene el valor de presión a lo largo del recorrido. Esta composición prepara el camino para integrar cantidades sobre trayectorias.</p><h4>Diferencia con funcion escalar</h4><p>Si <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="f(t) = t²"><mtext>f(t) = t²</mtext></math>, la salida es un número; si <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="r(t) = ⟨t, t²⟩"><mtext>r(t) = ⟨t, t²⟩</mtext></math>, la salida es un vector en el plano. Ambas reglas usan el parámetro t, pero representan objetos distintos. En la primera se puede dibujar una curva en el plano t-y; en la segunda se dibuja una trayectoria en el plano x-y. Esta diferencia es central para estudiar movimiento, curvas en el espacio e integrales de línea. Más adelante, cuando se calcule una integral sobre una curva, la trayectoria podrá parametrizarse mediante una función vectorial.</p></article><article class="mwh-card theory-card"><h3>5. Campos escalares y campos vectoriales</h3><p>Un campo es una asignación de información a cada punto de una región. Si a cada punto se le asigna un número, se habla de campo escalar; si a cada punto se le asigna un vector, se habla de campo vectorial. La palabra campo enfatiza que la cantidad está distribuida en el espacio. Por ejemplo, T(x, y) puede describir temperatura sobre una placa; <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="P(x, y, z)"><mtext>P(x, y, z)</mtext></math> puede describir presión en una región del subsuelo; <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="F(x, y) = ⟨M(x, y), N(x, y)⟩"><mtext>F(x, y) = ⟨M(x, y), N(x, y)⟩</mtext></math> puede describir una fuerza o velocidad en cada punto del plano.</p><h4>Comparacion</h4><p>La diferencia entre función vectorial y campo vectorial puede entenderse desde la entrada. Una función vectorial r(t) asigna un vector a cada valor del parámetro t; usualmente describe una curva. Un campo vectorial F(x, y) asigna un vector a cada punto del plano; describe una distribución espacial de vectores. En una función vectorial, la salida puede interpretarse como posición de un punto que se mueve. En un campo vectorial, la salida puede interpretarse como la velocidad o fuerza que actuaría si un objeto estuviera en ese punto. Confundir estas ideas provoca errores: una trayectoria no es lo mismo que un campo por el que se desplaza una partícula.</p><h4>Proyeccion hacia contenidos posteriores</h4><p>En los contenidos finales del curso, los campos vectoriales permitirán estudiar integrales de línea y teorema de Green. Pero para llegar allí se necesita primero comprender que un campo vectorial no es una sola flecha, sino una regla que genera una flecha en cada punto del dominio. La lectura visual de estos campos exige observar patrones: dirección dominante, simetría, rotación, intensidad, puntos críticos y cambios de magnitud.</p></article>
+<figure class="mwh-figure">
+  <img src="assets/contenido_01_infografia_02_cuatro_objetos.png" alt="Comparacion en cuatro paneles entre funcion escalar, funcion vectorial, campo escalar y campo vectorial.">
+  <figcaption>Cuatro objetos matematicos y cuatro formas de representarlos.</figcaption>
+</figure>
+<article class="mwh-card theory-card"><h3>6. Representaciones: verbal, algebraica, tabular, gráfica y contextual</h3><p>Una función no se comprende completamente desde una sola representación. La representación algebraica muestra la regla; la verbal describe el fenómeno; la tabular muestra valores; la gráfica comunica forma, tendencia o distribución; la contextual aclara unidades, restricciones y propósito. En cálculo multivariable, el cambio entre representaciones es una habilidad central. Por ejemplo, la expresión <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="f(x, y) = 100 - x² - y²"><mtext>f(x, y) = 100 - x² - y²</mtext></math> puede verse como una superficie paraboloide, como un modelo idealizado de altura, como una distribución simétrica de presión o como una función que decrece al alejarse del origen. Cada lectura aporta información diferente.</p><h4>Uso en moodle</h4><p>En una ruta virtual, esta variedad de representaciones ayuda a que el estudiante no dependa de una única forma de explicación. El recurso puede iniciar con una situación verbal, mostrar una tabla de valores, presentar la fórmula, pedir al estudiante que anticipe la forma de la gráfica, y luego contrastar con una representación visual. Este encadenamiento activa el aprendizaje guiado: primero se recupera lo que el estudiante cree saber, luego se orienta la observación, después se realiza práctica y finalmente se produce una evidencia.</p><h4>Error frecuente</h4><p>Un error frecuente es creer que graficar una función equivale a comprenderla. Una gráfica puede ser incorrecta por escala, dominio, perspectiva o lectura de ejes. También puede ocultar unidades o restricciones. Por eso, cada representación debe acompañarse con preguntas de interpretación: ¿qué significa un punto?, ¿qué representa una altura?, ¿qué indica una flecha?, ¿qué región está permitida?, ¿qué unidades tiene la salida?, ¿qué ocurre si una variable permanece fija?</p></article><article class="mwh-card theory-card"><h3>7. La notación como herramienta de precisión</h3><p>La notación en análisis vectorial debe leerse con cuidado. La expresión <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="f(x, y)"><mtext>f(x, y)</mtext></math> indica normalmente una función escalar de dos variables. La expresión r(t) suele indicar una función vectorial parametrizada. La expresión <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="F(x, y) = ⟨P(x, y), Q(x, y)⟩"><mtext>F(x, y) = ⟨P(x, y), Q(x, y)⟩</mtext></math> suele indicar un campo vectorial en el plano. Cuando se escribe <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="T(x, y, z)"><mtext>T(x, y, z)</mtext></math>, se espera una salida escalar dependiente de tres coordenadas. Cuando se escribe <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="v(x, y, z) = ⟨v1(x, y, z), v2(x, y, z), v3(x, y, z)⟩"><mtext>v(x, y, z) = ⟨v1(x, y, z), v2(x, y, z), v3(x, y, z)⟩</mtext></math>, se espera un campo vectorial tridimensional. Esta lectura inicial orienta las operaciones posibles. No se deriva ni se integra de la misma manera una función escalar que una trayectoria o un campo.</p></article><article class="mwh-card theory-card"><h3>8. Funciones en contexto: del símbolo al modelo</h3><p>Un modelo matemático no es solo una fórmula. Es una construcción que selecciona variables, establece relaciones, simplifica la realidad y permite analizar un fenómeno. En ingeniería, una función puede modelar presión, velocidad, temperatura, concentración, costo, eficiencia, caudal o energía. El modelo siempre tiene supuestos. Por ejemplo, una función P(x, y) que representa presión sobre una sección horizontal puede suponer que la variación vertical es despreciable o que se estudia una capa específica. Una función v(x, y) que representa velocidad puede suponer flujo estacionario o una región bidimensional idealizada. Estos supuestos deben quedar claros para interpretar correctamente el resultado.</p></article>
+</section>
+
+
+<section class="mwh-section ">
+  <h2>Desarrollo procedimental</h2>
+  <div class="mwh-step-list"><article class="mwh-step"><span>1</span><div><h3>Identificar la entrada.</h3><p>Revise si la regla recibe un número, un par ordenado, una terna, un parámetro o un vector. Escriba la entrada de forma explícita. Por ejemplo, en <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="f(x, y)"><mtext>f(x, y)</mtext></math>, la entrada es el par (x, y); en r(t), la entrada es el parámetro t; en F(x, y, z), la entrada es la terna (x, y, z).</p></div></article><article class="mwh-step"><span>2</span><div><h3>Identificar la salida.</h3><p>Determine si la regla produce un número o un vector. Si produce un solo valor, la salida es escalar. Si produce componentes ordenadas, la salida es vectorial. No confunda el número de variables de entrada con el tipo de salida.</p></div></article><article class="mwh-step"><span>3</span><div><h3>Leer la regla en contexto.</h3><p>Pregunte qué representa la función. Una misma estructura puede describir altura, presión, costo o energía. El contexto define unidades y restricciones.</p></div></article><article class="mwh-step"><span>4</span><div><h3>Nombrar el tipo de objeto.</h3><p>Use una categoría precisa: función escalar de una variable, función escalar de varias variables, función vectorial parametrizada, campo escalar o campo vectorial.</p></div></article><article class="mwh-step"><span>5</span><div><h3>Elegir una representación útil.</h3><p>Seleccione una tabla, gráfica, superficie, curva de nivel, mapa de flechas, diagrama de componentes o explicación verbal según el propósito de lectura.</p></div></article><article class="mwh-step"><span>6</span><div><h3>Anticipar operaciones futuras.</h3><p>Determine qué operaciones serán naturales más adelante: derivadas parciales para funciones escalares de varias variables, gradiente para campos escalares, parametrización para trayectorias, integrales de línea para campos y curvas.</p></div></article></div>
+<figure class="mwh-figure">
+  <img src="assets/contenido_01_infografia_03_flujo_clasificacion.png" alt="Diagrama de flujo para decidir si una expresion es funcion escalar, funcion vectorial, campo escalar o campo vectorial.">
+  <figcaption>Ruta de decision para clasificar funciones antes de resolver ejercicios.</figcaption>
+</figure>
+<div class="mwh-grid two"><article class="mwh-card"><h3>Procedimiento para leer una situacion de ingenieria</h3>
+<h4>Pasos</h4><ul><li>Describir el fenómeno con palabras propias.</li><li>Listar las variables espaciales o temporales que intervienen.</li><li>Distinguir si la cantidad observada tiene solo magnitud o también dirección.</li><li>Proponer una notación coherente para la función.</li><li>Indicar unidades posibles de entrada y salida.</li><li>Explicar qué información daría una gráfica o una tabla.</li><li>Declarar qué no puede concluirse con la información disponible.</li></ul>
+</article><article class="mwh-card"><h3>Procedimiento para verificar una clasificacion</h3>
+<h4>Pasos</h4><ul><li>Reemplace la entrada por un ejemplo numérico permitido.</li><li>Calcule o describa la salida.</li><li>Observe si la salida es un número o un vector.</li><li>Verifique si el resultado tiene sentido en el contexto.</li><li>Compare con la categoría asignada inicialmente.</li><li>Corrija la clasificación si la salida contradice la lectura inicial.</li></ul>
+</article></div>
+</section>
+
+
+<section class="mwh-section ">
+  <h2>Ejemplos</h2>
+  <article class="mwh-card"><h3>Ejemplo 1: Función escalar de dos variables</h3><h4>Planteamiento</h4><p>Sea <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="f(x, y) = 4x - y²"><mtext>f(x, y) = 4x - y²</mtext></math>. Clasifique la función e interprete la salida.</p><h4>Desarrollo</h4><p>La entrada está formada por dos números: x y y. Cada par (x, y) produce un único número real. Por ejemplo, si x = 3 y y = 2, entonces <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="f(3, 2) = 4(3) - 2² = 12 - 4 = 8"><mtext>f(3, 2) = 4(3) - 2² = 12 - 4 = 8</mtext></math>. La salida es un número, no un vector. Por tanto, se trata de una función escalar de dos variables. Si el contexto fuera ingeniería, la salida podría representar una altura, una presión idealizada, una diferencia de potencial o un valor de costo, según las unidades definidas. Sin contexto, solo podemos afirmar su estructura matemática.</p><h4>Conclusion</h4><p>La función es escalar porque la salida es un número; depende de dos variables porque la entrada es un par ordenado.</p></article><article class="mwh-card"><h3>Ejemplo 2: Función vectorial parametrizada</h3><h4>Planteamiento</h4><p>Sea <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="r(t) = ⟨t, t², 2 - t⟩"><mtext>r(t) = ⟨t, t², 2 - t⟩</mtext></math>. Clasifique la función.</p><h4>Desarrollo</h4><p>La entrada es un solo parámetro t. La salida tiene tres componentes ordenadas: t, <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="t²"><mtext>t²</mtext></math> y 2 - t. Para t = 1, la salida es <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="r(1) = ⟨1, 1, 1⟩"><mtext>r(1) = ⟨1, 1, 1⟩</mtext></math>. Para t = 2, la salida es <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="r(2) = ⟨2, 4, 0⟩"><mtext>r(2) = ⟨2, 4, 0⟩</mtext></math>. Cada valor de t produce un vector de posición en el espacio tridimensional. Por tanto, r(t) es una función vectorial. Puede interpretarse como una trayectoria, porque al variar t se obtiene una curva en el espacio.</p><h4>Conclusion</h4><p>La función es vectorial aunque tenga una sola variable de entrada, porque su salida es un vector.</p></article><article class="mwh-card"><h3>Ejemplo 3: Campo escalar</h3><h4>Planteamiento</h4><p>Sea <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="P(x, y, z) = 120 - 0.3z + 0.02x"><mtext>P(x, y, z) = 120 - 0.3z + 0.02x</mtext></math>. Suponga que P representa presión idealizada en una región del subsuelo.</p><h4>Desarrollo</h4><p>La entrada es una terna espacial (x, y, z). La salida es un número que representa presión. Aunque la función depende de tres coordenadas, la salida no tiene dirección; solo expresa magnitud. Por eso se trata de un campo escalar. La expresión sugiere que la presión disminuye cuando z aumenta y aumenta ligeramente cuando x aumenta, si las unidades se mantienen coherentes. No se puede concluir nada sobre el flujo por sí solo; para hablar de flujo sería necesario estudiar cambios espaciales, gradientes u otros modelos.</p><h4>Conclusion</h4><p>El objeto es un campo escalar porque asigna un valor numérico de presión a cada punto de una región.</p></article><article class="mwh-card"><h3>Ejemplo 4: Campo vectorial</h3><h4>Planteamiento</h4><p>Sea <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="V(x, y) = ⟨-y, x⟩"><mtext>V(x, y) = ⟨-y, x⟩</mtext></math>. Clasifique la función e interprete su patrón.</p><h4>Desarrollo</h4><p>La entrada es un punto del plano (x, y). La salida es un vector con dos componentes: -y y x. En el punto (1, 0), <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="V(1, 0) = ⟨0, 1⟩"><mtext>V(1, 0) = ⟨0, 1⟩</mtext></math>. En el punto (0, 1), <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="V(0, 1) = ⟨-1, 0⟩"><mtext>V(0, 1) = ⟨-1, 0⟩</mtext></math>. En el punto (-1, 0), <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="V(-1, 0) = ⟨0, -1⟩"><mtext>V(-1, 0) = ⟨0, -1⟩</mtext></math>. La salida cambia de dirección según el punto de entrada. Este objeto no representa una sola trayectoria, sino una flecha asignada a cada punto del plano. El patrón sugiere rotación alrededor del origen.</p><h4>Conclusion</h4><p>Se trata de un campo vectorial en el plano. Más adelante, un campo de este tipo permitirá estudiar circulación mediante integrales de línea.</p></article><article class="mwh-card"><h3>Ejemplo 5: Comparación entre trayectoria y campo</h3><h4>Planteamiento</h4><p>Compare <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="r(t) = ⟨cos(t), sin(t)⟩"><mtext>r(t) = ⟨cos(t), sin(t)⟩</mtext></math> y <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="F(x, y) = ⟨-y, x⟩"><mtext>F(x, y) = ⟨-y, x⟩</mtext></math>.</p><h4>Desarrollo</h4><p>La función r(t) toma un parámetro t y produce puntos sobre una circunferencia unitaria. Describe una curva o trayectoria. En cambio, F(x, y) toma cualquier punto del plano y produce un vector asociado a ese punto. Aunque ambas expresiones pueden relacionarse visualmente con rotación, no representan lo mismo. r(t) indica dónde está un punto para cada valor de t. F(x, y) indica qué vector corresponde a cada punto del plano. Si una partícula se moviera por la trayectoria r(t) dentro del campo F, se podrían evaluar los vectores del campo sobre la trayectoria mediante <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="F(r(t))"><mtext>F(r(t))</mtext></math>.</p><h4>Conclusion</h4><p>La trayectoria es una función vectorial parametrizada; el campo asigna vectores a puntos de una región.</p></article>
+</section>
+
+
+<section class="mwh-section ">
+  <h2>Problemas resueltos</h2>
+  <article class="mwh-card problem-card"><h3>Problema resuelto 1: Clasificación de modelos matemáticos</h3><p class="mwh-tag">Universitario inicial</p><h4>Planteamiento</h4><p>Clasifique los siguientes objetos e indique entrada, salida y posible interpretación: a) <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="T(x, y) = 35 - 0.1x² - 0.1y²"><mtext>T(x, y) = 35 - 0.1x² - 0.1y²</mtext></math>; b) <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="r(s) = ⟨s, 0.2s², 10⟩"><mtext>r(s) = ⟨s, 0.2s², 10⟩</mtext></math>; c) <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="W(x, y, z) = ⟨2x, -y, 0.5z⟩"><mtext>W(x, y, z) = ⟨2x, -y, 0.5z⟩</mtext></math>; d) <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="C(t) = 8e⁻⁰·²ᵗ"><mtext>C(t) = 8e⁻⁰·²ᵗ</mtext></math>.</p><h4>Solucion paso a paso</h4><div class="mwh-step-list compact"><article class="mwh-step"><span>1</span><div><p>Para T(x, y), la entrada es el par (x, y). La salida es un número. Por tanto, es una función escalar de dos variables o campo escalar en una región plana. Podría representar temperatura sobre una superficie.</p></div></article><article class="mwh-step"><span>2</span><div><p>Para r(s), la entrada es el parámetro s. La salida es un vector de tres componentes. Por tanto, es una función vectorial parametrizada. Podría representar una trayectoria en el espacio con altura constante z = 10.</p></div></article><article class="mwh-step"><span>3</span><div><p>Para W(x, y, z), la entrada es la terna espacial (x, y, z). La salida es un vector de tres componentes. Por tanto, es un campo vectorial tridimensional. Podría representar velocidad, fuerza o dirección de cambio en cada punto.</p></div></article><article class="mwh-step"><span>4</span><div><p>Para C(t), la entrada es un parámetro t y la salida es un número. Es una función escalar de una variable. Podría representar una concentración que disminuye con el tiempo.</p></div></article></div><h4>Justificacion conceptual</h4><p>La clasificación no se hace contando símbolos, sino comparando tipo de entrada y tipo de salida. Una salida escalar produce un número; una salida vectorial produce componentes ordenadas.</p><h4>Resultado</h4><p>a) Campo escalar plano. b) Función vectorial parametrizada. c) Campo vectorial tridimensional. d) Función escalar de una variable.</p><h4>Interpretacion</h4><p>Los cuatro objetos pueden ser útiles en ingeniería, pero habilitan operaciones diferentes. T puede analizarse con curvas de nivel; r puede describir trayectoria; W puede analizarse como campo; C puede estudiarse como evolución temporal.</p></article><article class="mwh-card problem-card"><h3>Problema resuelto 2: Presión y velocidad en una sección idealizada</h3><p class="mwh-tag">Universitario aplicado</p><h4>Planteamiento</h4><p>En una sección idealizada de un medio poroso se proponen dos modelos: <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="P(x, y) = 200 - 4x² - y²"><mtext>P(x, y) = 200 - 4x² - y²</mtext></math> y <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="V(x, y) = ⟨8x, 2y⟩"><mtext>V(x, y) = ⟨8x, 2y⟩</mtext></math>. Las coordenadas están en metros. P se expresa en unidades de presión idealizadas y V en unidades de velocidad idealizadas. Clasifique cada modelo, evalúe ambos en el punto (2, 4) e interprete las salidas.</p><h4>Solucion paso a paso</h4><div class="mwh-step-list compact"><article class="mwh-step"><span>1</span><div><p>Clasificamos P. La entrada es (x, y), un punto del plano. La salida es un número. P es un campo escalar porque asigna un valor de presión a cada punto.</p></div></article><article class="mwh-step"><span>2</span><div><p>Clasificamos V. La entrada es (x, y), un punto del plano. La salida es un vector de dos componentes. V es un campo vectorial porque asigna una velocidad a cada punto.</p></div></article><article class="mwh-step"><span>3</span><div><p>Evaluamos P(2, 4): <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="P(2, 4) = 200 - 4(2)² - (4)² = 200 - 16 - 16 = 168"><mtext>P(2, 4) = 200 - 4(2)² - (4)² = 200 - 16 - 16 = 168</mtext></math>.</p></div></article><article class="mwh-step"><span>4</span><div><p>Evaluamos V(2, 4): <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="V(2, 4) = ⟨8(2), 2(4)⟩ = ⟨16, 8⟩"><mtext>V(2, 4) = ⟨8(2), 2(4)⟩ = ⟨16, 8⟩</mtext></math>.</p></div></article><article class="mwh-step"><span>5</span><div><p>Interpretamos. En el punto (2, 4), el modelo de presión entrega el valor escalar 168. El modelo de velocidad entrega un vector con dirección hacia el primer cuadrante y componentes 16 y 8.</p></div></article><article class="mwh-step"><span>6</span><div><p>Calculamos magnitud de V para completar la lectura: <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="|V(2,4)| = √(16² + 8²) = √(256 + 64) = √(320) = 8√5"><mtext>|V(2,4)| = √(16² + 8²) = √(256 + 64) = √(320) = 8√5</mtext></math>, aproximadamente 17.89.</p></div></article></div>
+<figure class="mwh-figure">
+  <img src="assets/contenido_01_grafico_01_presion_velocidad.png" alt="Comparacion entre presion como campo escalar y velocidad como campo vectorial en el punto dos coma cuatro.">
+  <figcaption>Mismo punto, dos tipos de salida: presion escalar y velocidad vectorial.</figcaption>
+</figure>
+<h4>Justificacion conceptual</h4><p>La presión es escalar porque no requiere dirección para describirse en un punto. La velocidad es vectorial porque requiere dirección y magnitud.</p><h4>Resultado</h4><p>P es campo escalar y <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="P(2,4) = 168"><mtext>P(2,4) = 168</mtext></math>. V es campo vectorial y <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="V(2,4) = ⟨16,8⟩"><mtext>V(2,4) = ⟨16,8⟩</mtext></math>, con magnitud aproximada 17.89.</p><h4>Interpretacion</h4><p>El punto tiene una presión modelada de 168 y una velocidad dirigida con mayor componente en x que en y. Esta diferencia prepara la lectura de gradientes y campos en contenidos posteriores.</p></article><article class="mwh-card problem-card"><h3>Problema resuelto 3: Trayectoria de pozo simplificada y propiedad escalar</h3><p class="mwh-tag">Universitario aplicado</p><h4>Planteamiento</h4><p>Una trayectoria simplificada se modela mediante <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="r(s) = ⟨s, 0.05s², 100 - 2s⟩"><mtext>r(s) = ⟨s, 0.05s², 100 - 2s⟩</mtext></math>, con s entre 0 y 20. Una propiedad escalar del medio se modela como <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="Q(x, y, z) = 0.8x + 0.2y - 0.01z"><mtext>Q(x, y, z) = 0.8x + 0.2y - 0.01z</mtext></math>. a) Clasifique r y Q. b) Evalúe la posición para s = 10. c) Evalúe Q sobre la trayectoria en s = 10. d) Explique qué significa componer <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="Q(r(s))"><mtext>Q(r(s))</mtext></math>.</p><h4>Solucion paso a paso</h4><div class="mwh-step-list compact"><article class="mwh-step"><span>1</span><div><p>r(s) recibe un parámetro y entrega un vector de tres componentes. Es una función vectorial parametrizada que describe una trayectoria espacial.</p></div></article><article class="mwh-step"><span>2</span><div><p>Q(x, y, z) recibe un punto del espacio y entrega un número. Es un campo escalar tridimensional.</p></div></article><article class="mwh-step"><span>3</span><div><p>Evaluamos r(10): <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="r(10) = ⟨10, 0.05(10)², 100 - 2(10)⟩ = ⟨10, 5, 80⟩"><mtext>r(10) = ⟨10, 0.05(10)², 100 - 2(10)⟩ = ⟨10, 5, 80⟩</mtext></math>.</p></div></article><article class="mwh-step"><span>4</span><div><p>Evaluamos Q en el punto obtenido: <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="Q(10, 5, 80) = 0.8(10) + 0.2(5) - 0.01(80) = 8 + 1 - 0.8 = 8.2"><mtext>Q(10, 5, 80) = 0.8(10) + 0.2(5) - 0.01(80) = 8 + 1 - 0.8 = 8.2</mtext></math>.</p></div></article><article class="mwh-step"><span>5</span><div><p>La composición <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="Q(r(s))"><mtext>Q(r(s))</mtext></math> significa medir la propiedad escalar Q a lo largo de la trayectoria r. Primero se ubica el punto de la trayectoria para un valor de s y luego se evalúa la propiedad en ese punto.</p></div></article><article class="mwh-step"><span>6</span><div><p>Podemos escribir la composición: <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="Q(r(s)) = 0.8s + 0.2(0.05s²) - 0.01(100 - 2s) = 0.8s + 0.01s² - 1 + 0.02s = 0.01s² + 0.82s - 1"><mtext>Q(r(s)) = 0.8s + 0.2(0.05s²) - 0.01(100 - 2s) = 0.8s + 0.01s² - 1 + 0.02s = 0.01s² + 0.82s - 1</mtext></math>.</p></div></article></div>
+<figure class="mwh-figure">
+  <img src="assets/contenido_01_infografia_04_composicion_trayectoria_campo.png" alt="Secuencia que muestra como se elige un parametro, se ubica un punto de una trayectoria y se evalua un campo escalar.">
+  <figcaption>Composicion de un campo escalar con una trayectoria parametrizada.</figcaption>
+</figure>
+<h4>Justificacion conceptual</h4><p>Este problema muestra cómo una función vectorial puede alimentar a un campo escalar. La trayectoria produce puntos; el campo escalar asigna valores a esos puntos.</p><h4>Resultado</h4><p>r es función vectorial parametrizada; Q es campo escalar; <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="r(10) = ⟨10,5,80⟩"><mtext>r(10) = ⟨10,5,80⟩</mtext></math>; <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="Q(r(10)) = 8.2"><mtext>Q(r(10)) = 8.2</mtext></math>; <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="Q(r(s)) = 0.01s² + 0.82s - 1"><mtext>Q(r(s)) = 0.01s² + 0.82s - 1</mtext></math>.</p><h4>Interpretacion</h4><p>La composición permite estudiar cómo cambia una propiedad del medio mientras se recorre una trayectoria. Esta idea será útil al estudiar integrales de línea y campos.</p></article><article class="mwh-card problem-card"><h3>Problema resuelto 4: Detección de errores de interpretación</h3><p class="mwh-tag">Universitario conceptual</p><h4>Planteamiento</h4><p>Un estudiante afirma: &#x27;La función <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="f(x, y, z) = x + y - z"><mtext>f(x, y, z) = x + y - z</mtext></math> es vectorial porque tiene tres variables&#x27;. Analice la afirmación, corrija el error y proponga un ejemplo de función vectorial con tres variables de entrada.</p><h4>Solucion paso a paso</h4><div class="mwh-step-list compact"><article class="mwh-step"><span>1</span><div><p>Identificamos la entrada de f: una terna (x, y, z).</p></div></article><article class="mwh-step"><span>2</span><div><p>Identificamos la salida: x + y - z es un solo número real.</p></div></article><article class="mwh-step"><span>3</span><div><p>Concluimos que f no es vectorial. Es una función escalar de tres variables o campo escalar en el espacio.</p></div></article><article class="mwh-step"><span>4</span><div><p>El error del estudiante consiste en clasificar por número de variables de entrada y no por tipo de salida.</p></div></article><article class="mwh-step"><span>5</span><div><p>Un ejemplo de función vectorial con tres variables de entrada es <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="F(x, y, z) = ⟨x + y, y - z, xz⟩"><mtext>F(x, y, z) = ⟨x + y, y - z, xz⟩</mtext></math>. La entrada sigue siendo una terna, pero la salida ahora tiene tres componentes.</p></div></article></div><h4>Justificacion conceptual</h4><p>Lo vectorial se define por la salida vectorial, no por la cantidad de variables independientes.</p><h4>Resultado</h4><p>La afirmación es incorrecta. f es campo escalar. Un ejemplo vectorial es <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="F(x,y,z)=⟨x+y, y-z, xz⟩"><mtext>F(x,y,z)=⟨x+y, y-z, xz⟩</mtext></math>.</p><h4>Interpretacion</h4><p>Este tipo de error debe corregirse temprano porque afecta la selección de métodos en todo el curso.</p></article><article class="mwh-card problem-card"><h3>Problema resuelto 5: Selección de representación adecuada</h3><p class="mwh-tag">Universitario de análisis</p><h4>Planteamiento</h4><p>Para cada objeto, seleccione una representación visual adecuada y justifique: a) <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="f(x, y) = x² + y²"><mtext>f(x, y) = x² + y²</mtext></math>; b) <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="r(t) = ⟨cos(t), sin(t)⟩"><mtext>r(t) = ⟨cos(t), sin(t)⟩</mtext></math>; c) <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="F(x, y) = ⟨1, y⟩"><mtext>F(x, y) = ⟨1, y⟩</mtext></math>; d) <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="P(x, y, z) = x² + y² - z"><mtext>P(x, y, z) = x² + y² - z</mtext></math>.</p><h4>Solucion paso a paso</h4><div class="mwh-step-list compact"><article class="mwh-step"><span>1</span><div><p>Para <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="f(x, y) = x² + y²"><mtext>f(x, y) = x² + y²</mtext></math>, una superficie <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="z = x² + y²"><mtext>z = x² + y²</mtext></math> muestra el paraboloide. También son útiles curvas de nivel circulares porque f toma el mismo valor cuando <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="x² + y²"><mtext>x² + y²</mtext></math> es constante.</p></div></article><article class="mwh-step"><span>2</span><div><p>Para <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="r(t) = ⟨cos(t), sin(t)⟩"><mtext>r(t) = ⟨cos(t), sin(t)⟩</mtext></math>, una curva parametrizada en el plano muestra la circunferencia unitaria y flechas de orientación según aumenta t.</p></div></article><article class="mwh-step"><span>3</span><div><p>Para <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="F(x, y) = ⟨1, y⟩"><mtext>F(x, y) = ⟨1, y⟩</mtext></math>, un campo de flechas permite observar que todas las flechas tienen componente horizontal positiva constante y componente vertical dependiente de y.</p></div></article><article class="mwh-step"><span>4</span><div><p>Para <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="P(x, y, z) = x² + y² - z"><mtext>P(x, y, z) = x² + y² - z</mtext></math>, las superficies de nivel son adecuadas, porque la salida es escalar en tres variables y una gráfica directa requeriría una dimensión adicional.</p></div></article></div><h4>Justificacion conceptual</h4><p>La representación se elige según entrada, salida y propósito. Las superficies funcionan bien para funciones escalares de dos variables; los campos de flechas para campos vectoriales; las trayectorias para funciones vectoriales parametrizadas; las superficies de nivel para campos escalares tridimensionales.</p><h4>Resultado</h4><p>a) Superficie y curvas de nivel. b) Curva parametrizada orientada. c) Campo de flechas. d) Superficies de nivel.</p><h4>Interpretacion</h4><p>Elegir representación es parte del razonamiento matemático. Una representación inadecuada puede ocultar el fenómeno o inducir errores.</p></article>
+</section>
+
+
+<section class="mwh-section ">
+  <h2>Caso de aplicacion</h2>
+  <article class="mwh-card"><h3>Lectura inicial de variables en una sección de subsuelo idealizada</h3>
+<p><strong>Situacion:</strong> Un equipo académico simula una sección bidimensional de un medio poroso para iniciar el análisis matemático de propiedades espaciales. No se busca modelar un yacimiento real, sino entrenar la lectura de objetos matemáticos. Se proponen tres expresiones: <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="P(x, y) = 180 - 2x² - 0.5y²"><mtext>P(x, y) = 180 - 2x² - 0.5y²</mtext></math>, <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="V(x, y) = ⟨4x, -y⟩"><mtext>V(x, y) = ⟨4x, -y⟩</mtext></math> y <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="r(t) = ⟨t, 3 + 0.5t⟩"><mtext>r(t) = ⟨t, 3 + 0.5t⟩</mtext></math>. El estudiante debe identificar qué representa cada expresión desde el punto de vista matemático, qué tipo de salida produce y qué representación visual convendría construir.</p>
+<h4>Preguntas guia</h4><ul><li>¿Cuál expresión asigna un número a cada punto?</li><li>¿Cuál expresión asigna un vector a cada punto?</li><li>¿Cuál expresión describe una trayectoria?</li><li>¿Qué podría significar evaluar <math class="math-inline" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" aria-label="P(r(t))"><mtext>P(r(t))</mtext></math>?</li><li>¿Qué errores aparecerían si se confundiera V(x,y) con r(t)?</li></ul>
+<p><strong>Transferencia:</strong> El caso permite reconocer la diferencia entre propiedad escalar, campo vectorial y trayectoria. Esta distinción se usará posteriormente para estudiar curvas de nivel, gradientes, integrales múltiples e integrales de línea.</p>
+</article>
+</section>
+
+
+<section class="mwh-section ">
+  <h2>Practica guiada</h2>
+  <article class="mwh-card"><h3>Ficha de lectura de funciones escalares y vectoriales</h3>
+<h4>Instrucciones paso a paso</h4><ul><li>Revise cada expresión dada en la actividad.</li><li>Escriba la entrada exacta: número, parámetro, par ordenado, terna o punto del espacio.</li><li>Evalúe la función en un punto sencillo permitido para observar la salida.</li><li>Clasifique la salida como escalar o vectorial.</li><li>Nombre el tipo de objeto matemático.</li><li>Proponga una representación visual adecuada.</li><li>Escriba una interpretación contextual breve sin exagerar lo que el modelo permite concluir.</li><li>Compare su clasificación con la de un compañero y registre una corrección o confirmación.</li></ul>
+<h4>Materiales</h4><ul><li>Calculadora básica o herramienta de cálculo simbólico usada con criterio.</li><li>GeoGebra u otra herramienta de visualización, si está disponible.</li><li>Plantilla de ficha de lectura provista en Moodle.</li><li>Infografía de clasificación entrada-salida.</li></ul>
+<p><strong>Tiempo estimado:</strong> 3 horas de trabajo autónomo y 1 hora de acompañamiento o foro orientado.</p>
+<p><strong>Acompanamiento docente:</strong> El docente revisará muestras de clasificación, señalará errores frecuentes y orientará la diferencia entre trayectoria, campo escalar y campo vectorial.</p>
+</article>
+</section>
+
+
+<section class="mwh-section ">
+  <h2>Actividad</h2>
+  <article class="mwh-card"><h3>Clasificar, representar e interpretar funciones en contexto</h3>
+<p><strong>Que comprender:</strong> Debe comprender que una función se clasifica por su entrada, su salida y su interpretación. Debe distinguir cantidad escalar, cantidad vectorial, campo escalar, función vectorial parametrizada y campo vectorial.</p>
+<h4>Que hacer</h4><ul><li>Clasifique ocho expresiones matemáticas propuestas en Moodle.</li><li>Para cada expresión, complete una ficha con entrada, salida, tipo de objeto, evaluación en un punto y representación sugerida.</li><li>Seleccione dos expresiones y proponga una interpretación contextual relacionada con ingeniería o ciencias básicas.</li><li>Elabore un mapa conceptual breve que compare función escalar, función vectorial, campo escalar y campo vectorial.</li><li>Publique una observación en el foro sobre un error conceptual que haya corregido durante la actividad.</li></ul>
+<h4>Que entregar</h4><ul><li>Ficha de clasificación completa en formato definido por el aula.</li><li>Mapa conceptual en PDF, imagen o documento editable.</li><li>Participación breve en foro con reflexión sobre error corregido.</li></ul>
+<p><strong>Como entregarlo:</strong> Subir la ficha y el mapa conceptual en la actividad de Moodle del Contenido 1. La reflexión se publica en el foro asociado. Si se usa una herramienta visual, incluir enlace o captura legible.</p>
+<p><strong>Para que sirve:</strong> La actividad permite verificar si el estudiante está preparado para estudiar dominio, curvas de nivel, límites y derivadas parciales sin confundir objetos matemáticos.</p>
+<h4>Condiciones de calidad</h4><ul><li>La clasificación debe justificar entrada y salida.</li><li>La interpretación no debe inventar unidades ni contexto cuando no estén dados.</li><li>El mapa conceptual debe mostrar relaciones, no solo definiciones aisladas.</li><li>La participación en foro debe aportar una reflexión propia y respetuosa.</li></ul>
+</article>
+</section>
+
+
+<section class="mwh-section ">
+  <h2>Evidencia</h2>
+  <article class="mwh-card"><h3>Producto observable</h3>
+<p><strong>Producto observable:</strong> Ficha de clasificación e interpretación de funciones escalares y vectoriales, mapa conceptual comparativo y participación reflexiva en foro.</p>
+<p><strong>Relacion con ra:</strong> Evidencia inicial del RA1 porque muestra comprensión de conceptos básicos de funciones en varias variables y preparación para derivadas parciales.</p>
+<h4>Criterios de observacion</h4><ul><li>Identifica correctamente entrada y salida.</li><li>Clasifica con precisión los objetos matemáticos.</li><li>Interpreta la salida según contexto.</li><li>Selecciona representaciones visuales pertinentes.</li><li>Comunica con notación y lenguaje académico claro.</li></ul>
+</article>
+</section>
+
+
+<section class="mwh-section ">
+  <h2>Criterios cualitativos</h2>
+  <p>La valoración se realiza de acuerdo con PL-GAP-007: formativa, cualitativa, continua y centrada en resultados de aprendizaje. No se asigna porcentaje porque el sílabo entregado no define pesos evaluativos.</p><div class="mwh-grid levels"><article class="mwh-card mini"><h3>Sobresaliente</h3><p>Clasifica todos los objetos con precisión, justifica entrada y salida, interpreta con contexto pertinente, reconoce límites del modelo y comunica relaciones en un mapa conceptual claro y profundo.</p></article><article class="mwh-card mini"><h3>Muy bueno</h3><p>Clasifica la mayoría de objetos con precisión, explica adecuadamente la diferencia entre escalar y vectorial, y presenta una interpretación contextual coherente con pocos ajustes necesarios.</p></article><article class="mwh-card mini"><h3>Bueno</h3><p>Distingue los tipos principales de funciones y campos, aunque requiere fortalecer justificaciones o representación visual.</p></article><article class="mwh-card mini"><h3>Aceptable</h3><p>Reconoce algunas diferencias básicas, pero presenta confusiones ocasionales entre número de variables y tipo de salida.</p></article><article class="mwh-card mini"><h3>Insuficiente</h3><p>Clasifica de manera incompleta o confunde de forma reiterada funciones escalares, funciones vectoriales, campos escalares y campos vectoriales.</p></article><article class="mwh-card mini"><h3>Deficiente</h3><p>No evidencia comprensión operativa de entrada y salida, o entrega respuestas sin justificación matemática.</p></article><article class="mwh-card mini"><h3>No acreditable</h3><p>No entrega evidencia verificable o la entrega no permite valorar el resultado de aprendizaje.</p></article></div><p>El criterio se conecta con CE1 del sílabo: reconoce funciones escalares y vectoriales. Este contenido trabaja el primer tramo de ese criterio antes de abordar derivadas parciales y optimización.</p><p>Se observará puntualidad, participación activa, uso responsable de herramientas tecnológicas y comunicación asertiva en la coevaluación del foro.</p>
+</section>
+
+
+<section class="mwh-section ">
+  <h2>Retroalimentacion</h2>
+  <article class="mwh-card"><h3>Pistas, errores y acciones de mejora</h3>
+<h4>Pistas de revision</h4><ul><li>Revise si clasificó por tipo de salida y no solo por número de variables.</li><li>Compruebe cada clasificación evaluando la función en un punto sencillo.</li><li>Pregunte si la salida tiene dirección. Si no tiene dirección, no es vectorial.</li><li>Distinga trayectoria de campo: una trayectoria produce puntos al variar un parámetro; un campo asigna valores o vectores a puntos de una región.</li><li>Verifique si su representación visual corresponde al tipo de objeto.</li></ul>
+<h4>Errores frecuentes</h4><ul><li>Decir que una función es vectorial porque tiene dos o tres variables.</li><li>Confundir r(t) con F(x,y), aunque ambas tengan componentes.</li><li>Asignar dirección a una cantidad escalar como presión o temperatura.</li><li>Usar una gráfica de superficie para un campo vectorial sin flechas ni componentes.</li><li>Inventar unidades o contexto que no aparecen en el problema.</li></ul>
+<h4>Acciones de mejora</h4><ul><li>Rehacer la ficha de entrada y salida para los ejercicios con error.</li><li>Comparar dos ejemplos: uno escalar de varias variables y uno vectorial de una variable.</li><li>Construir una tabla con columnas de entrada, salida, tipo y representación.</li><li>Consultar la infografía de clasificación antes de resolver nuevos ejercicios.</li><li>Explicar oralmente a un compañero por qué un objeto es campo y otro trayectoria.</li></ul>
+<p><strong>Acompanamiento:</strong> El docente podrá seleccionar tres errores representativos del foro y responder con una retroalimentación general. Los estudiantes que confundan reiteradamente salida escalar y salida vectorial recibirán una actividad corta de refuerzo con ejemplos contrastivos.</p>
+</article>
+</section>
+
+
+<section class="mwh-section ">
+  <h2>Cierre</h2>
+  <p>En este contenido se estableció el lenguaje inicial del análisis vectorial. Una función puede recibir números, puntos o parámetros; puede devolver escalares o vectores; puede representar una trayectoria, una propiedad distribuida o un campo de flechas. La clasificación correcta depende de identificar entrada, salida y contexto. Esta precisión conceptual es indispensable para los próximos contenidos.</p><p>Cuando se analice una función en varias variables, el estudiante podrá iniciar con una ficha de lectura: qué entra, qué sale, qué representa, qué restricciones tiene y cómo conviene visualizarla. Esta estrategia será útil al estudiar dominio, curvas de nivel, límites, derivadas parciales, integrales múltiples y campos vectoriales.</p><p>¿Qué error sería más grave en un modelo de ingeniería: tratar como vectorial una cantidad escalar o tratar como escalar una cantidad vectorial? Justifique su respuesta con un ejemplo.</p><p>El siguiente contenido profundiza en dominio, rango, cónicas, superficies y curvas de nivel. Allí se usará la clasificación aprendida para analizar dónde existe una función y cómo se representa su comportamiento espacial.</p>
+</section>
+
+
+<section class="mwh-section ">
+  <h2>Referencias</h2>
+  <ul><li>Fundación Universidad de América. (2025). Syllabus Análisis Vectorial. Formato FO-GAP-003, versión 05.</li><li>Stewart, J. (2012). Cálculo de varias variables. Trascendentes tempranas (7.ª ed.). Cengage Learning.</li><li>Universidad de América. (2025). PL-GAP-007 Evaluación cualitativa pregrado, versión 03.</li><li>Universidad de América. (s. f.). PL_01 Lineamientos para virtualidad.</li><li>Universidad de América. (s. f.). AN_01 Desarrollo de estrategias didácticas comunicativas.</li></ul>
+</section>
+
+
+<section class="mwh-section sources">
+  <h2>Fuentes usadas y trazabilidad</h2>
+  <ul><li><strong>Sílabo:</strong> Syllabus Análisis Vectorial, Universidad de América, formato FO-GAP-003, versión 05, fecha de actualización 28/03/2025. <em>Definición de RA1, saberes S1-S4, criterios de evaluación, instrumentos, perfil de egreso y créditos.</em></li><li><strong>Bibliografía base:</strong> Stewart, J. (2012). Cálculo de varias variables. Trascendentes tempranas (7.ª ed.). Cengage Learning. <em>Base conceptual para funciones de varias variables, vectores, geometría del espacio y lectura de representaciones gráficas.</em></li><li><strong>Lineamiento institucional:</strong> PL_01 Lineamientos para virtualidad, referencia sintetizada en la skill. <em>Criterios de virtualidad, trazabilidad entre recurso, resultado de aprendizaje, actividad y evidencia.</em></li><li><strong>Lineamiento institucional:</strong> AN_01 Desarrollo de estrategias didácticas comunicativas, referencia sintetizada en la skill. <em>Uso exclusivo de Aprendizaje Guiado y estructura comunicativa de actividades.</em></li><li><strong>Política institucional:</strong> PL-GAP-007 Evaluación Cualitativa Pregrado, versión 03, 24 de febrero de 2025. <em>Criterios cualitativos, retroalimentación formativa, autoevaluación, coevaluación y heteroevaluación.</em></li></ul>
+</section>
+
+
+</section>
+</body>
+</html>
