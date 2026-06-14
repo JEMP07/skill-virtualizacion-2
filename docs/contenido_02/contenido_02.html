@@ -1,0 +1,1034 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dominios, curvas de nivel y superficies con apoyo gráfico</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5d687b;
+      --line: #d9e2ef;
+      --soft: #f5f8fc;
+      --panel: #ffffff;
+      --blue: #1456a3;
+      --green: #14795d;
+      --orange: #c96f1a;
+      --red: #b83328;
+      --shadow: 0 18px 45px rgba(21, 41, 74, .10);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #eef3f8;
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.58;
+    }
+    a { color: var(--blue); }
+    .layout { min-height: 100vh; }
+    .hero {
+      background: linear-gradient(135deg, #0d3769 0%, #176a82 54%, #27734f 100%);
+      color: white;
+      padding: 44px max(24px, calc((100vw - 1180px) / 2)) 34px;
+    }
+    .eyebrow {
+      margin: 0 0 10px;
+      font-size: 14px;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      opacity: .86;
+      font-weight: 700;
+    }
+    h1 {
+      margin: 0;
+      max-width: 980px;
+      font-size: clamp(32px, 6vw, 58px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+    .hero-summary {
+      max-width: 920px;
+      margin: 20px 0 0;
+      font-size: 18px;
+      color: rgba(255,255,255,.92);
+    }
+    .meta-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .chip {
+      border: 1px solid rgba(255,255,255,.34);
+      background: rgba(255,255,255,.12);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      backdrop-filter: blur(8px);
+    }
+    .shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr);
+      gap: 24px;
+      padding: 24px 0 56px;
+    }
+    nav {
+      align-self: start;
+      position: sticky;
+      top: 16px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+      max-height: calc(100vh - 32px);
+      overflow: auto;
+    }
+    nav h2 { margin: 0 0 10px; font-size: 15px; color: var(--muted); }
+    nav a {
+      display: block;
+      padding: 8px 10px;
+      border-radius: 6px;
+      text-decoration: none;
+      color: var(--ink);
+      font-size: 14px;
+    }
+    nav a:hover { background: var(--soft); color: var(--blue); }
+    main { min-width: 0; }
+    section.content-section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: clamp(18px, 3vw, 30px);
+      margin-bottom: 22px;
+    }
+    .section-title {
+      margin: 0 0 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--line);
+      font-size: clamp(24px, 3vw, 34px);
+      line-height: 1.16;
+      color: #102444;
+    }
+    .section-title .index { color: var(--blue); font-size: .72em; margin-right: 8px; }
+    .obj { display: grid; gap: 14px; }
+    .field {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 14px;
+    }
+    .field > .key {
+      margin: 0 0 8px;
+      color: var(--blue);
+      font-weight: 700;
+      font-size: 15px;
+    }
+    .field.compact { background: transparent; border: 0; padding: 0; }
+    .array { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+    .array.strings { padding-left: 20px; list-style: disc; display: block; }
+    .array.strings li { margin: 5px 0; }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      padding: 14px;
+    }
+    .card-title { margin: 0 0 8px; color: #14223a; font-size: 18px; line-height: 1.25; }
+    .paragraph { margin: 0 0 10px; }
+    .scalar { white-space: pre-wrap; overflow-wrap: anywhere; }
+    .empty { color: var(--muted); font-style: italic; }
+    .inline-figure {
+      margin: 18px 0 22px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fbfdff;
+    }
+    .inline-figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: white;
+      border-bottom: 1px solid var(--line);
+    }
+    .inline-figure figcaption {
+      display: grid;
+      gap: 4px;
+      padding: 14px;
+      color: var(--muted);
+    }
+    .inline-figure figcaption strong {
+      color: var(--ink);
+      font-size: 18px;
+    }
+    footer { color: var(--muted); text-align: center; padding: 0 0 34px; }
+    @media (max-width: 880px) {
+      .shell { grid-template-columns: 1fr; }
+      nav { position: static; max-height: none; }
+      .hero { padding-top: 34px; }
+    }
+    @media print {
+      body { background: white; }
+      nav { display: none; }
+      .shell { display: block; width: 100%; padding: 0; }
+      section.content-section { box-shadow: none; break-inside: avoid; }
+      .hero { background: white; color: var(--ink); padding: 20px 0; }
+      .hero-summary { color: var(--ink); }
+      .chip { color: var(--ink); border-color: var(--line); background: white; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <header class="hero">
+      <p class="eyebrow">Análisis Vectorial</p>
+      <h1>Dominios, curvas de nivel y superficies con apoyo gráfico</h1>
+      <p class="hero-summary">En el contenido anterior aprendiste a mirar una función antes de calcular: identificaste qué entra, qué sale, si la salida es escalar o vectorial, y dónde puede estar definida. Ahora daremos el siguiente paso: convertir esa lectura en imagen. Cuando una función escalar depende de dos variables, como z = f(x, y), su dominio se lee como una región del plano, su gráfica puede representarse como una superficie en el espacio y sus curvas de nivel muestran dónde la función conserva el mismo valor. Estas tres miradas son complementarias. La región dice dónde vive la función; la superficie muestra cómo cambia la salida; las curvas de nivel permiten leer la función como un mapa. En ingeniería, esta habilidad es especialmente útil: muchas magnitudes no se entienden solo por una fórmula, sino por la forma en que cambian sobre una zona.</p>
+      <div class="meta-strip">
+        <span class="chip">Programa: Ingeniería de Petróleos</span>
+        <span class="chip">Contenido 02</span>
+        <span class="chip">HTML generado desde contenido_02.json</span>
+        <span class="chip">4 infografías generadas</span>
+      </div>
+    </header>
+
+    <div class="shell">
+      <nav aria-label="Navegación del contenido">
+        <h2>Contenido</h2>
+        <div id="toc"></div>
+      </nav>
+      <main>
+        <div id="content-root"></div>
+      </main>
+    </div>
+    <footer>Archivo autónomo generado desde JSON e infografías locales.</footer>
+  </div>
+
+  <script type="application/json" id="content-data">{
+  "metadatos": {
+    "numero_contenido": 2,
+    "titulo": "Dominios, curvas de nivel y superficies con apoyo gráfico",
+    "slug": "dominios_curvas_superficies",
+    "asignatura": "Análisis Vectorial",
+    "programa": "Ingeniería de Petróleos",
+    "creditos": 3,
+    "version": "1.0",
+    "fecha_generacion": "2026-06-14",
+    "fase": "Fase 5 - Producción progresiva de contenidos",
+    "fuentes_usadas": [
+      {
+        "tipo": "fuente_base",
+        "referencia": "Stewart, archivo local fuente_stewart_calculo_varias_variables.pdf",
+        "uso": "Base conceptual para funciones de varias variables, dominios, gráficas, curvas de nivel y superficies."
+      },
+      {
+        "tipo": "fuente_complementaria",
+        "referencia": "MIT OpenCourseWare 18.02SC Multivariable Calculus",
+        "uso": "Apoyo para enfoque de autoestudio, visualización y organización de recursos de cálculo multivariable."
+      },
+      {
+        "tipo": "fuente_complementaria",
+        "referencia": "Paul's Online Notes - Calculus III",
+        "uso": "Apoyo para práctica guiada y ejercicios sobre funciones de varias variables y superficies."
+      }
+    ],
+    "nota_editorial": "El sílabo cita Stewart 2018, octava edición. El archivo local suministrado por el usuario se toma como fuente base autorizada."
+  },
+  "ubicacion_en_ruta": {
+    "introduccion_general": "El Contenido 2 toma la lectura inicial de funciones del Contenido 1 y la convierte en representación visual. El estudiante ya distinguió entradas, salidas, dominio y tipo de función; ahora debe aprender a mirar dominios como regiones, superficies como gráficas y curvas de nivel como cortes que permiten leer una función escalar de dos variables.",
+    "contenido_anterior": "Contenido 1: Funciones escalares y vectoriales como modelos espaciales.",
+    "contenido_siguiente": "Contenido 3: Límites, continuidad y derivadas parciales.",
+    "cierre_integrador_final": "Las curvas de nivel y las superficies serán necesarias para comprender límites por trayectorias, continuidad, derivadas parciales, gradiente, planos tangentes e integración sobre regiones.",
+    "ruta_completa": [
+      "1. Funciones escalares y vectoriales como modelos espaciales",
+      "2. Dominios, curvas de nivel y superficies con apoyo gráfico",
+      "3. Límites, continuidad y derivadas parciales",
+      "4. Gradiente, derivadas direccionales y plano tangente",
+      "5. Optimización y multiplicadores de Lagrange",
+      "6. Integrales dobles, triples y cambio de coordenadas",
+      "7. Campos vectoriales, integrales de línea y teorema de Green"
+    ]
+  },
+  "hilo_conductor": {
+    "pregunta": "¿Cómo usar el cálculo vectorial para representar, derivar, optimizar e integrar fenómenos espaciales asociados a problemas de ingeniería?",
+    "situacion_narrativa": "Un equipo de ingeniería necesita interpretar mapas y modelos espaciales: una magnitud puede cambiar sobre una región, elevarse como superficie o mantenerse constante sobre ciertas líneas. Antes de calcular tasas de cambio, el equipo debe saber leer la forma del terreno matemático.",
+    "conexion_con_contenido": "Este contenido enseña a pasar de la fórmula a la imagen y de la imagen a la interpretación. La visualización no es decoración: es una herramienta para decidir dónde existe el modelo, cómo se comporta y qué preguntas matemáticas tienen sentido."
+  },
+  "plantillas_catalogo_disponibles": [
+    "SCORM",
+    "Carrusel de Imágenes",
+    "Carrusel de Notas Claves",
+    "Flash Card",
+    "Acordeón",
+    "Carrusel de Ejercicios Paso a Paso",
+    "Visualización con Pestañas",
+    "Infografías",
+    "Componentes de Referencias",
+    "Material Complementario",
+    "Infografía"
+  ],
+  "resultados_aprendizaje": [
+    {
+      "codigo": "RA 1",
+      "descripcion": "Interpreto los conceptos y técnicas básicas de una función en varias variables y sus derivadas parciales.",
+      "relacion_con_contenido": "El contenido fortalece la interpretación de funciones de dos variables mediante dominio, gráfica, superficie, trazas y curvas de nivel."
+    }
+  ],
+  "saberes": {
+    "conceptuales": [
+      "Dominio de funciones de dos variables como región del plano.",
+      "Gráfica de una función z = f(x, y) como superficie.",
+      "Curvas de nivel como conjuntos donde f(x, y) = c.",
+      "Trazas verticales y cortes horizontales.",
+      "Relación entre fórmula, región, superficie y mapa de contorno.",
+      "Uso académico de GeoGebra o herramienta equivalente."
+    ],
+    "procedimentales": [
+      "Determinar dominios a partir de restricciones algebraicas.",
+      "Dibujar o describir regiones del dominio.",
+      "Construir tablas de valores para reconocer comportamiento.",
+      "Interpretar superficies generadas digitalmente.",
+      "Obtener y leer curvas de nivel.",
+      "Comparar representaciones de una misma función."
+    ],
+    "actitudinales": [
+      "Usar herramientas gráficas para comprender, no para reemplazar el razonamiento.",
+      "Verificar que una gráfica corresponda a la fórmula y al dominio.",
+      "Explicar con lenguaje propio lo que muestra una representación.",
+      "Reconocer incertidumbres cuando una gráfica requiere más análisis."
+    ]
+  },
+  "momento_aprendizaje_guiado": {
+    "momento_dominante": "Acción de estudio",
+    "momentos_integrados": [
+      "Saber previo",
+      "Acción de estudio",
+      "Práctica guiada",
+      "Evidencia parcial",
+      "Cierre integrador"
+    ],
+    "justificacion": "El estudiante debe observar, comparar, describir y relacionar representaciones. La acción de estudio se centra en leer la función desde varias miradas antes de pasar a límites y derivadas."
+  },
+  "introduccion": "En el contenido anterior aprendiste a mirar una función antes de calcular: identificaste qué entra, qué sale, si la salida es escalar o vectorial, y dónde puede estar definida. Ahora daremos el siguiente paso: convertir esa lectura en imagen. Cuando una función escalar depende de dos variables, como z = f(x, y), su dominio se lee como una región del plano, su gráfica puede representarse como una superficie en el espacio y sus curvas de nivel muestran dónde la función conserva el mismo valor. Estas tres miradas son complementarias. La región dice dónde vive la función; la superficie muestra cómo cambia la salida; las curvas de nivel permiten leer la función como un mapa. En ingeniería, esta habilidad es especialmente útil: muchas magnitudes no se entienden solo por una fórmula, sino por la forma en que cambian sobre una zona.",
+  "secuencia_explicativa": [
+    {
+      "orden": 1,
+      "titulo": "Activar dominio y salida escalar",
+      "descripcion": "Se retoma la matriz de lectura del Contenido 1 y se enfatiza que las funciones escalares de dos variables pueden representarse con regiones y superficies."
+    },
+    {
+      "orden": 2,
+      "titulo": "Leer el dominio como región",
+      "descripcion": "Se estudian restricciones por raíces, denominadores y logaritmos; luego se traducen a regiones del plano."
+    },
+    {
+      "orden": 3,
+      "titulo": "Comprender la gráfica z = f(x, y)",
+      "descripcion": "Se explica que la gráfica de una función de dos variables es el conjunto de puntos (x, y, z) con z = f(x, y)."
+    },
+    {
+      "orden": 4,
+      "titulo": "Relacionar trazas y cortes",
+      "descripcion": "Se usan cortes verticales y horizontales para entender cómo una superficie puede analizarse por partes."
+    },
+    {
+      "orden": 5,
+      "titulo": "Interpretar curvas de nivel",
+      "descripcion": "Se define f(x, y) = c y se muestra que cada valor de c produce una curva o conjunto de puntos en el dominio."
+    },
+    {
+      "orden": 6,
+      "titulo": "Usar herramienta gráfica con criterio",
+      "descripcion": "Se orienta el uso de GeoGebra o herramienta equivalente para construir superficies y curvas de nivel, verificando restricciones y significado."
+    },
+    {
+      "orden": 7,
+      "titulo": "Producir reporte visual interpretado",
+      "descripcion": "El estudiante compara dos funciones, genera representaciones y escribe una lectura matemática y contextual."
+    }
+  ],
+  "facilitadores_comprension": {
+    "analogias": [
+      {
+        "concepto": "Dominio",
+        "analogia": "Es el terreno donde está permitido caminar. La función no existe fuera de ese terreno o deja de tener sentido para el modelo."
+      },
+      {
+        "concepto": "Superficie",
+        "analogia": "Es como levantar un mapa: cada punto del plano recibe una altura que representa el valor de la función."
+      },
+      {
+        "concepto": "Curva de nivel",
+        "analogia": "Es como una línea en un mapa topográfico: todos los puntos de esa línea tienen el mismo valor de altura, presión, temperatura u otra magnitud."
+      }
+    ],
+    "glosario_minimo": [
+      {
+        "termino": "Región",
+        "explicacion": "Conjunto de puntos del plano que cumplen una condición."
+      },
+      {
+        "termino": "Superficie",
+        "explicacion": "Representación tridimensional de z = f(x, y), donde z es la salida de la función."
+      },
+      {
+        "termino": "Curva de nivel",
+        "explicacion": "Conjunto de puntos (x, y) donde la función toma un valor constante c."
+      },
+      {
+        "termino": "Traza",
+        "explicacion": "Corte de una superficie con un plano, usado para entender su forma."
+      },
+      {
+        "termino": "Mapa de contorno",
+        "explicacion": "Representación plana de varias curvas de nivel."
+      }
+    ],
+    "preguntas_verificacion": [
+      "¿El dominio es todo el plano o una región restringida?",
+      "¿Qué condición algebraica define el dominio?",
+      "¿La gráfica representa una salida escalar como altura?",
+      "¿Qué significa que f(x, y) = c?",
+      "¿Las curvas de nivel están cerca o lejos entre sí, y qué podría indicar eso?",
+      "¿La herramienta gráfica está mostrando el dominio correcto?"
+    ],
+    "ideas_clave": [
+      "El dominio de una función de dos variables suele ser una región, no solo una lista de números.",
+      "La superficie z = f(x, y) representa una salida escalar mediante altura.",
+      "Las curvas de nivel permiten leer una superficie desde arriba.",
+      "Una gráfica digital debe interpretarse y verificarse; no basta con insertarla.",
+      "Curvas de nivel más cercanas suelen sugerir cambios más rápidos, idea que prepara el gradiente."
+    ],
+    "errores_frecuentes": [
+      "Graficar una superficie sin revisar el dominio.",
+      "Confundir el dominio con la gráfica de la función.",
+      "Creer que una curva de nivel es una trayectoria de movimiento.",
+      "Usar GeoGebra sin explicar qué muestra la imagen.",
+      "Interpretar el eje z como una variable de entrada cuando z = f(x, y) es la salida.",
+      "Dibujar el exterior de una región cuando la desigualdad indica el interior."
+    ],
+    "explicacion_alternativa": "Piensa en tres capas: primero está el plano donde se ubican las entradas (dominio); luego está la altura que asigna la función a cada punto (superficie); finalmente están las líneas que unen puntos con la misma altura (curvas de nivel)."
+  },
+  "contenido_teorico_extenso": [
+    {
+      "titulo": "1. Del dominio como conjunto al dominio como región",
+      "desarrollo": [
+        "En cálculo de una variable, el dominio suele representarse mediante intervalos. Por ejemplo, una función puede estar definida para x >= 0 o para todos los reales excepto un punto. En funciones de dos variables, el dominio cambia de forma visual: ya no es una línea de valores permitidos, sino una región del plano. Esta diferencia es profunda porque obliga a leer desigualdades como zonas, fronteras, interiores, exteriores y bordes.",
+        "Si se tiene una función f(x, y), las entradas son pares ordenados. Cada par (x, y) corresponde a un punto del plano. El dominio es el conjunto de puntos que la función acepta. Si la función no tiene raíces pares, denominadores, logaritmos ni restricciones contextuales, el dominio puede ser todo el plano. Pero si aparece una condición como x^2 + y^2 \u003c= 9, el dominio se convierte en un disco. Si aparece y >= x^2, el dominio es la región sobre una parábola. Si aparece x + y > 0, el dominio es un semiplano.",
+        "Leer el dominio como región ayuda a evitar errores posteriores. En integrales múltiples, por ejemplo, los límites de integración dependen de la región. En límites de varias variables, las trayectorias de aproximación se mueven dentro o cerca del dominio. En optimización, los máximos y mínimos pueden ocurrir dentro de la región o en su frontera. Por eso el dominio no es una formalidad: es el espacio donde el modelo vive."
+      ]
+    },
+    {
+      "titulo": "2. Restricciones algebraicas frecuentes",
+      "desarrollo": [
+        "Las restricciones algebraicas más comunes se reconocen desde cursos anteriores, pero en dos variables producen geometría. Una raíz cuadrada exige que el radicando sea mayor o igual que cero. Si f(x, y) = sqrt(x + y), el dominio se define por x + y >= 0. Esta desigualdad describe un semiplano. La frontera es la recta x + y = 0 y el dominio está de un lado de esa recta, incluyendo la frontera.",
+        "Un denominador no puede ser cero. Si g(x, y) = 1 / (x^2 + y^2 - 1), el dominio excluye los puntos que cumplen x^2 + y^2 - 1 = 0. La ecuación x^2 + y^2 = 1 representa una circunferencia. El dominio es todo el plano excepto esa circunferencia. En este caso no se elimina el interior ni el exterior completo, sino solo la frontera donde el denominador se anula.",
+        "Un logaritmo exige argumento positivo. Si h(x, y) = ln(4 - x^2 - y^2), el dominio cumple 4 - x^2 - y^2 > 0, es decir, x^2 + y^2 \u003c 4. Aquí el borde no se incluye porque el logaritmo de cero no está definido. Es un disco abierto de radio 2. Esta diferencia entre \u003c= y \u003c es pequeña en símbolos, pero enorme en geometría: una incluye el borde; la otra lo excluye."
+      ]
+    },
+    {
+      "titulo": "3. Dominio contextual en ingeniería",
+      "desarrollo": [
+        "Además de las restricciones algebraicas, los modelos de ingeniería suelen tener restricciones contextuales. Una fórmula puede permitir todo el plano, pero la situación física no. Si una función T(x, y) describe temperatura en una placa rectangular, el dominio no es todo el plano, sino la región ocupada por la placa. Si una función P(x, y, z) describe presión en una muestra de roca, el dominio está limitado por la geometría de la muestra y por las unidades de medición.",
+        "El dominio contextual se construye desde el significado de las variables. Si x e y son coordenadas dentro de una sección circular, quizá deban cumplir x^2 + y^2 \u003c= R^2. Si x representa distancia horizontal en un tramo de 100 metros, entonces 0 \u003c= x \u003c= 100. Si y representa profundidad positiva hacia abajo, se debe definir si y >= 0 o si se usa otra convención. La fórmula sola no siempre responde estas preguntas.",
+        "En la virtualización de este curso, se espera que el estudiante aprenda a escribir ambos dominios cuando sea necesario: el dominio algebraico y el dominio contextual. Esta doble lectura es una señal de pensamiento ingenieril: se respeta la matemática, pero también se respeta el fenómeno."
+      ]
+    },
+    {
+      "titulo": "4. La gráfica de z = f(x, y) como superficie",
+      "desarrollo": [
+        "Cuando f es una función escalar de dos variables, su gráfica está formada por puntos (x, y, z) tales que z = f(x, y). Las variables x e y ubican una entrada en el plano; la salida f(x, y) se representa como altura z. El resultado es una superficie en el espacio tridimensional. Esta superficie permite observar elevaciones, valles, simetrías, pendientes visuales y zonas de cambio rápido o lento.",
+        "Por ejemplo, f(x, y) = x^2 + y^2 produce una superficie en forma de paraboloide que se abre hacia arriba. En el origen, el valor es 0; al alejarse del origen, el valor aumenta. La fórmula y la superficie cuentan la misma historia en lenguajes distintos. La fórmula dice que la salida es la suma de dos cuadrados; la imagen muestra que el valor crece radialmente.",
+        "Otro ejemplo es f(x, y) = 9 - x^2 - y^2, una superficie que se abre hacia abajo. Su valor máximo ocurre en el origen y disminuye al alejarse. Si se restringe a los puntos donde la función es no negativa, se obtiene una especie de domo. Visualizar la superficie ayuda a anticipar comportamientos que luego se analizarán con derivadas y optimización."
+      ]
+    },
+    {
+      "titulo": "5. Trazas: entender una superficie por cortes",
+      "desarrollo": [
+        "Una superficie puede ser difícil de imaginar completa. Las trazas ayudan a estudiarla por cortes. Una traza se obtiene al intersectar la superficie con un plano. Si se fija x = a, se observa cómo cambia z con y sobre una línea vertical del dominio. Si se fija y = b, se observa cómo cambia z con x. Estas trazas convierten temporalmente un problema de dos variables en una curva de una variable.",
+        "Por ejemplo, para f(x, y) = x^2 + y^2, si se fija y = 0, queda z = x^2, una parábola. Si se fija x = 0, queda z = y^2, otra parábola. Estas trazas ayudan a entender por qué la superficie completa es un paraboloide. En una herramienta gráfica, mover cortes verticales permite ver familias de curvas que revelan la forma de la superficie.",
+        "Las trazas también preparan una idea importante: cuando más adelante calculemos una derivada parcial, estaremos observando el cambio en una dirección coordenada, algo muy parecido a mirar una traza y preguntarse por su pendiente en un punto."
+      ]
+    },
+    {
+      "titulo": "6. Curvas de nivel: leer una superficie desde arriba",
+      "desarrollo": [
+        "Una curva de nivel de una función f(x, y) es el conjunto de puntos del dominio donde la función toma un valor constante c. Se escribe f(x, y) = c. Si la superficie representa alturas, una curva de nivel une puntos que tienen la misma altura. Por eso los mapas topográficos usan curvas de nivel: permiten representar información tridimensional en un plano.",
+        "Para f(x, y) = x^2 + y^2, las curvas de nivel se obtienen resolviendo x^2 + y^2 = c. Si c > 0, estas curvas son circunferencias centradas en el origen con radio sqrt(c). Todas las entradas sobre una misma circunferencia producen el mismo valor de la función. Desde arriba, la superficie se ve como una familia de circunferencias.",
+        "Para f(x, y) = x + y, las curvas de nivel cumplen x + y = c, que son rectas paralelas. Esto muestra que no todas las curvas de nivel son circunferencias. La forma de las curvas depende de la función. Interpretarlas ayuda a reconocer simetrías, direcciones de cambio y zonas donde la función crece o decrece."
+      ]
+    },
+    {
+      "titulo": "7. Separación entre dominio, superficie y curvas de nivel",
+      "desarrollo": [
+        "Una dificultad común es mezclar tres objetos distintos: dominio, superficie y curvas de nivel. El dominio está en el plano de entrada; la superficie está en el espacio tridimensional; las curvas de nivel vuelven al plano de entrada, pero con información de la salida. Aunque se relacionan, no son lo mismo.",
+        "El dominio responde: ¿dónde puedo evaluar la función? La superficie responde: ¿qué altura o valor produce la función en cada punto? Las curvas de nivel responden: ¿dónde la función produce el mismo valor? Si el estudiante mantiene separadas estas preguntas, podrá leer mejor cualquier representación.",
+        "En herramientas digitales, la confusión puede aumentar porque una gráfica 3D se ve atractiva y parece explicarlo todo. Pero una superficie sin dominio correcto puede ser engañosa. Un mapa de contorno sin valores de nivel puede ser incompleto. Una captura sin interpretación no demuestra aprendizaje. Por eso cada representación debe acompañarse de explicación matemática."
+      ]
+    },
+    {
+      "titulo": "8. Uso crítico de GeoGebra o herramienta equivalente",
+      "desarrollo": [
+        "GeoGebra, Desmos 3D u otras herramientas pueden ayudar a visualizar funciones de dos variables. Sin embargo, la herramienta no reemplaza el razonamiento. Antes de graficar, el estudiante debe anticipar el dominio y el tipo de superficie. Después de graficar, debe verificar si la imagen coincide con la fórmula y con las restricciones.",
+        "Una buena práctica consiste en seguir una secuencia: primero escribir la función; segundo determinar el dominio; tercero identificar valores importantes; cuarto generar la superficie; quinto generar curvas de nivel o cortes; sexto escribir una interpretación. Si se invierte el orden y solo se pega una captura, se pierde la intención matemática del recurso.",
+        "La visualización debe responder preguntas. ¿Dónde crece la función? ¿Dónde parece tener un valor máximo o mínimo? ¿Qué forma tienen las curvas de nivel? ¿Hay simetría? ¿El dominio tiene borde incluido o excluido? ¿La representación usa unidades o escala adecuadas? Estas preguntas convierten la herramienta en apoyo de aprendizaje."
+      ]
+    },
+    {
+      "titulo": "9. Relación con límites y derivadas parciales",
+      "desarrollo": [
+        "Aunque este contenido no calcula todavía límites ni derivadas parciales en profundidad, prepara ambos temas. Los límites de funciones de dos variables exigen comprender que un punto puede ser alcanzado por muchas trayectorias dentro del dominio. Las curvas de nivel y los dominios ayudan a imaginar esas trayectorias.",
+        "Las derivadas parciales se entienden mejor cuando se han visto trazas. Derivar parcialmente respecto a x significa observar cómo cambia la salida cuando x varía y y se mantiene fijo. Visualmente, esto se parece a mirar una curva obtenida por un corte de la superficie. Por eso las trazas de este contenido serán retomadas en el siguiente.",
+        "El gradiente, que aparecerá más adelante, se relaciona con curvas de nivel porque apunta en la dirección de mayor crecimiento y es perpendicular a las curvas de nivel bajo condiciones adecuadas. Esa idea todavía no se formaliza aquí, pero se prepara al observar mapas de contorno: curvas juntas, curvas separadas, zonas altas y zonas bajas."
+      ]
+    }
+  ],
+  "desarrollo_procedimental": {
+    "metodo_para_analizar_representaciones": [
+      {
+        "paso": 1,
+        "accion": "Identificar la función y su tipo.",
+        "detalle": "Confirmar que se trabaja con una función escalar de dos variables z = f(x, y)."
+      },
+      {
+        "paso": 2,
+        "accion": "Determinar dominio algebraico.",
+        "detalle": "Revisar raíces, denominadores, logaritmos y cualquier condición que limite las entradas."
+      },
+      {
+        "paso": 3,
+        "accion": "Dibujar o describir la región del dominio.",
+        "detalle": "Traducir desigualdades a regiones: semiplanos, discos, exteriores, interiores, bandas o regiones delimitadas por curvas."
+      },
+      {
+        "paso": 4,
+        "accion": "Calcular valores de referencia.",
+        "detalle": "Evaluar la función en puntos simples para anticipar altura o comportamiento."
+      },
+      {
+        "paso": 5,
+        "accion": "Generar o bosquejar la superficie.",
+        "detalle": "Usar razonamiento o herramienta gráfica para visualizar z = f(x, y)."
+      },
+      {
+        "paso": 6,
+        "accion": "Obtener curvas de nivel.",
+        "detalle": "Resolver f(x, y) = c para varios valores de c y describir la familia de curvas."
+      },
+      {
+        "paso": 7,
+        "accion": "Escribir interpretación.",
+        "detalle": "Explicar qué muestra cada representación y cómo se relacionan dominio, superficie y curvas de nivel."
+      }
+    ],
+    "criterio_de_uso_de_herramienta": "La herramienta gráfica debe usarse después de una lectura matemática inicial y antes de la interpretación final. Toda captura o visualización debe tener comentario propio."
+  },
+  "ejemplos": [
+    {
+      "titulo": "Ejemplo 1. Paraboloide z = x^2 + y^2",
+      "modelo": "f(x, y) = x^2 + y^2",
+      "analisis": "El dominio es todo R^2 porque no hay restricciones algebraicas. La superficie es un paraboloide que se abre hacia arriba. Las curvas de nivel cumplen x^2 + y^2 = c, por lo que son circunferencias para c > 0. El origen produce el valor mínimo 0.",
+      "aprendizaje": "Una misma fórmula se puede leer como región total, superficie y familia de curvas de nivel."
+    },
+    {
+      "titulo": "Ejemplo 2. Plano z = x + y",
+      "modelo": "f(x, y) = x + y",
+      "analisis": "El dominio es todo R^2. La gráfica es un plano. Las curvas de nivel cumplen x + y = c, una familia de rectas paralelas. Si c aumenta, las rectas se desplazan manteniendo la misma inclinación.",
+      "aprendizaje": "Las curvas de nivel de una función lineal son rectas paralelas."
+    },
+    {
+      "titulo": "Ejemplo 3. Domo restringido por raíz",
+      "modelo": "f(x, y) = sqrt(9 - x^2 - y^2)",
+      "analisis": "El dominio exige x^2 + y^2 \u003c= 9. La superficie corresponde a la semiesfera superior de radio 3. Las curvas de nivel cumplen sqrt(9 - x^2 - y^2) = c, lo cual lleva a x^2 + y^2 = 9 - c^2 para 0 \u003c= c \u003c= 3.",
+      "aprendizaje": "La restricción del dominio y la forma de las curvas de nivel están conectadas."
+    }
+  ],
+  "problemas_resueltos": [
+    {
+      "titulo": "Problema resuelto 1. Dominio y curvas de nivel de una raíz",
+      "nivel": "Universitario introductorio",
+      "contexto": "Una magnitud superficial disminuye radialmente desde un punto central.",
+      "enunciado": "Sea f(x, y) = sqrt(25 - x^2 - y^2). Determine el dominio, describa la superficie y obtenga las curvas de nivel principales.",
+      "solucion_paso_a_paso": [
+        {
+          "paso": 1,
+          "descripcion": "Identificar restricción.",
+          "desarrollo": "La raíz cuadrada exige 25 - x^2 - y^2 >= 0."
+        },
+        {
+          "paso": 2,
+          "descripcion": "Despejar condición del dominio.",
+          "desarrollo": "La condición equivale a x^2 + y^2 \u003c= 25. Esto representa un disco cerrado de radio 5 centrado en el origen."
+        },
+        {
+          "paso": 3,
+          "descripcion": "Describir superficie.",
+          "desarrollo": "Como z = sqrt(25 - x^2 - y^2), se tiene z >= 0. Al elevar al cuadrado, z^2 = 25 - x^2 - y^2, es decir, x^2 + y^2 + z^2 = 25. La superficie es la semiesfera superior de radio 5."
+        },
+        {
+          "paso": 4,
+          "descripcion": "Obtener curvas de nivel.",
+          "desarrollo": "Para f(x, y) = c, se cumple sqrt(25 - x^2 - y^2) = c. Entonces x^2 + y^2 = 25 - c^2. Las curvas son circunferencias para 0 \u003c= c \u003c= 5."
+        },
+        {
+          "paso": 5,
+          "descripcion": "Interpretar niveles.",
+          "desarrollo": "Cuando c = 5, la curva de nivel se reduce al punto (0, 0). Cuando c = 0, la curva es el borde del dominio, x^2 + y^2 = 25. Los niveles intermedios son circunferencias."
+        }
+      ],
+      "resultado": "Dominio: x^2 + y^2 \u003c= 25. Superficie: semiesfera superior de radio 5. Curvas de nivel: x^2 + y^2 = 25 - c^2, con 0 \u003c= c \u003c= 5.",
+      "verificacion": "En el origen f(0,0)=5, valor máximo. En el borde del disco, f=0. Fuera del disco, la función no está definida en reales.",
+      "transferencia": "Esta lectura será útil para integrales en regiones circulares y para interpretar curvas de nivel como mapas."
+    },
+    {
+      "titulo": "Problema resuelto 2. Región excluida por un denominador",
+      "nivel": "Universitario introductorio",
+      "contexto": "Un modelo racional describe una respuesta que no está definida sobre una frontera crítica.",
+      "enunciado": "Sea g(x, y) = 1 / (x^2 + y^2 - 4). Determine el dominio y explique qué región se excluye.",
+      "solucion_paso_a_paso": [
+        {
+          "paso": 1,
+          "descripcion": "Identificar restricción.",
+          "desarrollo": "El denominador no puede ser cero: x^2 + y^2 - 4 != 0."
+        },
+        {
+          "paso": 2,
+          "descripcion": "Resolver condición prohibida.",
+          "desarrollo": "La condición x^2 + y^2 - 4 = 0 equivale a x^2 + y^2 = 4, una circunferencia de radio 2."
+        },
+        {
+          "paso": 3,
+          "descripcion": "Describir dominio.",
+          "desarrollo": "El dominio es todo el plano excepto la circunferencia de radio 2. El interior del círculo sí pertenece al dominio, y el exterior también; solo se excluye el borde crítico."
+        },
+        {
+          "paso": 4,
+          "descripcion": "Interpretar comportamiento.",
+          "desarrollo": "Cerca de la circunferencia excluida, el denominador se acerca a cero y la función puede crecer en magnitud. Esto advierte que la gráfica tendrá comportamiento abrupto cerca de esa frontera."
+        }
+      ],
+      "resultado": "Dominio: R^2 menos la circunferencia x^2 + y^2 = 4.",
+      "verificacion": "El punto (0,0) pertenece al dominio porque el denominador vale -4. El punto (2,0) no pertenece porque el denominador vale 0.",
+      "transferencia": "Distinguir entre excluir una frontera y excluir una región completa será importante al plantear dominios e integrales."
+    },
+    {
+      "titulo": "Problema resuelto 3. Curvas de nivel de una función lineal",
+      "nivel": "Universitario introductorio",
+      "contexto": "Una magnitud cambia linealmente sobre una región plana.",
+      "enunciado": "Sea h(x, y) = 2x - y. Describa su dominio, superficie y curvas de nivel.",
+      "solucion_paso_a_paso": [
+        {
+          "paso": 1,
+          "descripcion": "Dominio.",
+          "desarrollo": "No hay raíces, divisiones ni logaritmos. El dominio algebraico es todo R^2."
+        },
+        {
+          "paso": 2,
+          "descripcion": "Superficie.",
+          "desarrollo": "La gráfica z = 2x - y es un plano. Aumenta cuando x aumenta y disminuye cuando y aumenta."
+        },
+        {
+          "paso": 3,
+          "descripcion": "Curvas de nivel.",
+          "desarrollo": "Para h(x, y) = c, se tiene 2x - y = c. Al despejar, y = 2x - c. Las curvas de nivel son rectas paralelas de pendiente 2."
+        },
+        {
+          "paso": 4,
+          "descripcion": "Interpretación.",
+          "desarrollo": "Cada recta reúne puntos donde la magnitud tiene el mismo valor. Cambiar c desplaza la recta sin cambiar su pendiente."
+        }
+      ],
+      "resultado": "Dominio: R^2. Superficie: plano. Curvas de nivel: y = 2x - c.",
+      "verificacion": "Si c = 0, la curva es y = 2x. Si c = 1, la curva es y = 2x - 1. Son paralelas.",
+      "transferencia": "Las curvas de nivel lineales ayudan a visualizar cambios constantes y preparan la lectura del gradiente."
+    }
+  ],
+  "graficos_y_representaciones": [
+    {
+      "id": "grafico_01_tres_miradas",
+      "titulo": "Tres miradas de una función de dos variables",
+      "proposito": "Diferenciar dominio, superficie y curvas de nivel.",
+      "tipo": "Infografía comparativa de tres paneles",
+      "datos_o_relaciones": "Panel 1: dominio en plano xy; panel 2: superficie z=f(x,y); panel 3: curvas de nivel f(x,y)=c.",
+      "ubicacion_en_contenido": {
+        "seccion": "contenido_teorico_extenso",
+        "subtema": "Separación entre dominio, superficie y curvas de nivel",
+        "punto_insercion": "Antes del subtema 7, para preparar la comparación conceptual.",
+        "proposito_lectura": "Evitar que el estudiante confunda región, gráfica y mapa de contorno."
+      },
+      "nombre_imagen": "contenido_02_infografia_01_tres_miradas.png",
+      "referencia_markdown_infografias": "contenido_02_infografias.md#infografia-1-tres-miradas-de-una-funcion-de-dos-variables",
+      "generacion": "Debe generarse con modelo de imagen."
+    },
+    {
+      "id": "grafico_02_restricciones_dominio",
+      "titulo": "Restricciones algebraicas y regiones del dominio",
+      "proposito": "Mostrar cómo raíces, denominadores y logaritmos generan regiones permitidas o excluidas.",
+      "tipo": "Tabla visual con mini regiones",
+      "datos_o_relaciones": "Raíz par: radicando >= 0; denominador: excluir cero; logaritmo: argumento > 0.",
+      "ubicacion_en_contenido": {
+        "seccion": "contenido_teorico_extenso",
+        "subtema": "Restricciones algebraicas frecuentes",
+        "punto_insercion": "Después de explicar las tres restricciones principales.",
+        "proposito_lectura": "Traducir reglas algebraicas a lectura geométrica."
+      },
+      "nombre_imagen": "contenido_02_infografia_02_restricciones_dominio.png",
+      "referencia_markdown_infografias": "contenido_02_infografias.md#infografia-2-restricciones-algebraicas-y-regiones-del-dominio",
+      "generacion": "Debe generarse con modelo de imagen."
+    },
+    {
+      "id": "grafico_03_semiesfera_curvas_nivel",
+      "titulo": "Semiesfera y curvas de nivel",
+      "proposito": "Conectar f(x,y)=sqrt(25-x^2-y^2) con dominio circular, semiesfera y niveles.",
+      "tipo": "Diagrama combinado 3D y mapa de contorno",
+      "datos_o_relaciones": "Dominio x^2+y^2\u003c=25; superficie semiesfera superior; curvas x^2+y^2=25-c^2.",
+      "ubicacion_en_contenido": {
+        "seccion": "problemas_resueltos",
+        "subtema": "Problema resuelto 1",
+        "punto_insercion": "Después del paso 4, antes de interpretar niveles.",
+        "proposito_lectura": "Mostrar que el mismo modelo produce dominio, superficie y curvas de nivel."
+      },
+      "nombre_imagen": "contenido_02_grafico_01_semiesfera_niveles.png",
+      "referencia_markdown_infografias": "contenido_02_infografias.md#infografia-3-semiesfera-y-curvas-de-nivel",
+      "generacion": "Debe generarse con modelo de imagen."
+    },
+    {
+      "id": "grafico_04_flujo_geogebra",
+      "titulo": "Flujo de trabajo para visualizar con GeoGebra",
+      "proposito": "Guiar el uso de una herramienta gráfica sin perder razonamiento matemático.",
+      "tipo": "Diagrama de proceso",
+      "datos_o_relaciones": "Función -> dominio -> valores de referencia -> superficie -> curvas de nivel -> interpretación.",
+      "ubicacion_en_contenido": {
+        "seccion": "desarrollo_procedimental",
+        "subtema": "Método para analizar representaciones",
+        "punto_insercion": "Antes de la práctica guiada.",
+        "proposito_lectura": "Mostrar que la herramienta digital se usa dentro de un proceso de análisis."
+      },
+      "nombre_imagen": "contenido_02_infografia_03_flujo_geogebra.png",
+      "referencia_markdown_infografias": "contenido_02_infografias.md#infografia-4-flujo-de-trabajo-para-visualizar-con-geogebra",
+      "generacion": "Debe generarse con modelo de imagen."
+    }
+  ],
+  "caso_o_aplicacion": {
+    "titulo": "Mapa de variación de una magnitud en una región",
+    "situacion": "Un equipo quiere interpretar cómo varía una magnitud escalar sobre una zona plana de estudio. La función no basta por sí sola: se necesita saber en qué región tiene sentido, cómo se eleva o disminuye y qué líneas mantienen el mismo valor.",
+    "preguntas_guia": [
+      "¿Cuál es el dominio algebraico?",
+      "¿Hay un dominio físico o contextual más restringido?",
+      "¿La superficie tiene máximos, mínimos visuales, valles o simetrías?",
+      "¿Qué forma tienen las curvas de nivel?",
+      "¿Qué representación ayuda mejor a explicar el fenómeno?"
+    ],
+    "transferencia": "Este caso prepara la lectura de límites, continuidad y derivadas parciales, porque todas esas técnicas dependen de comprender la región y el comportamiento local."
+  },
+  "practica_guiada": {
+    "titulo": "Del dominio al mapa de contorno",
+    "instrucciones_paso_a_paso": [
+      "Selecciona una función escalar de dos variables.",
+      "Identifica restricciones algebraicas.",
+      "Describe el dominio como región del plano.",
+      "Evalúa la función en tres puntos sencillos.",
+      "Genera la superficie con GeoGebra o herramienta equivalente.",
+      "Construye al menos tres curvas de nivel.",
+      "Compara la superficie y el mapa de contorno.",
+      "Escribe una interpretación de cinco a ocho líneas."
+    ],
+    "funciones_para_practicar": [
+      "f(x, y) = x^2 + y^2",
+      "g(x, y) = sqrt(9 - x^2 - y^2)",
+      "h(x, y) = x + 2y",
+      "p(x, y) = ln(4 - x^2 - y^2)"
+    ],
+    "criterio_de_autochequeo": "La representación debe coincidir con el dominio y cada curva de nivel debe cumplir f(x, y) = c para un valor declarado de c."
+  },
+  "actividad": {
+    "titulo": "Reporte gráfico de dominios, superficies y curvas de nivel",
+    "que_comprender": "Comprender cómo una función escalar de dos variables se representa mediante dominio, superficie y curvas de nivel.",
+    "que_hacer": "Elegir dos funciones asignadas por el docente, determinar su dominio, generar o bosquejar superficie y curvas de nivel, y explicar la relación entre las representaciones.",
+    "que_entregar": "Un reporte con fórmula, dominio, captura o bosquejo de superficie, curvas de nivel, interpretación y reflexión sobre el uso de herramienta gráfica.",
+    "como_entregarlo": "Subir el reporte al aula Moodle en formato PDF o documento editable. Las imágenes deben tener título, fuente de generación propia y explicación.",
+    "para_que_sirve": "Esta actividad prepara la comprensión de límites, continuidad, derivadas parciales y gradiente.",
+    "tiempo_estimado": "4 a 5 horas de trabajo autónomo."
+  },
+  "evidencia": {
+    "producto": "Reporte gráfico interpretado.",
+    "componentes_obligatorios": [
+      "Función 1 y función 2.",
+      "Dominio algebraico de cada función.",
+      "Descripción geométrica del dominio.",
+      "Superficie generada o bosquejada.",
+      "Curvas de nivel con valores c identificados.",
+      "Interpretación escrita de cada representación.",
+      "Conclusión comparativa."
+    ],
+    "criterio_de_entrega": "La evidencia debe mostrar que el estudiante entiende las imágenes. No se aceptan capturas sin explicación."
+  },
+  "criterios_cualitativos": {
+    "criterio_principal_silabo": "Reconoce funciones escalares y vectoriales e interpreta gráficas de funciones de dos variables.",
+    "niveles": [
+      {
+        "nivel": "Sobresaliente",
+        "descriptor": "Determina dominios con precisión, genera representaciones coherentes, interpreta superficies y curvas de nivel con rigor, y compara funciones con lenguaje matemático claro."
+      },
+      {
+        "nivel": "Muy bueno",
+        "descriptor": "Representa correctamente dominio, superficie y curvas de nivel, con explicaciones claras y pocas imprecisiones."
+      },
+      {
+        "nivel": "Bueno",
+        "descriptor": "Identifica dominios y produce representaciones adecuadas, aunque puede requerir mayor profundidad en la interpretación."
+      },
+      {
+        "nivel": "Aceptable",
+        "descriptor": "Reconoce elementos principales, pero presenta debilidades en la relación entre fórmula, dominio y gráfica."
+      },
+      {
+        "nivel": "Insuficiente",
+        "descriptor": "Confunde dominio, superficie o curvas de nivel, o entrega imágenes con escasa explicación."
+      },
+      {
+        "nivel": "Deficiente",
+        "descriptor": "No logra representar correctamente las funciones ni justificar las restricciones del dominio."
+      },
+      {
+        "nivel": "No acreditable",
+        "descriptor": "No entrega evidencia suficiente o la evidencia no corresponde a la actividad."
+      }
+    ],
+    "relacion_PL_GAP_007": "La actividad se valora cualitativamente con retroalimentación sobre interpretación gráfica, razonamiento y uso responsable de herramientas tecnológicas."
+  },
+  "retroalimentacion": {
+    "fortalezas_a_reconocer": [
+      "Dominio correctamente expresado como región.",
+      "Curvas de nivel coherentes con la función.",
+      "Uso pertinente de GeoGebra o herramienta equivalente.",
+      "Interpretación escrita que conecta fórmula e imagen."
+    ],
+    "errores_a_revisar": [
+      "Dibujar dominio incorrecto.",
+      "No distinguir borde incluido y excluido.",
+      "Presentar capturas sin explicación.",
+      "Confundir curvas de nivel con trazas verticales.",
+      "Usar valores de nivel imposibles para la función."
+    ],
+    "acciones_de_refuerzo": [
+      "Revisar la infografía de tres miradas.",
+      "Rehacer el dominio antes de graficar.",
+      "Comparar una superficie con su mapa de contorno.",
+      "Consultar la sección de Stewart sobre funciones de varias variables y curvas de nivel."
+    ],
+    "siguiente_paso": "Prepararse para el Contenido 3, donde se analizará el comportamiento cerca de puntos mediante límites, continuidad y derivadas parciales."
+  },
+  "cierre": {
+    "sintesis": "Una función escalar de dos variables puede leerse desde tres representaciones: dominio, superficie y curvas de nivel. El dominio muestra dónde está definida; la superficie muestra cómo varía la salida; las curvas de nivel muestran dónde la salida permanece constante.",
+    "transferencia": "Estas representaciones preparan el estudio de límites, continuidad, derivadas parciales, gradiente, optimización e integración sobre regiones.",
+    "pregunta_reflexion": "¿Qué información se pierde si solo miras la fórmula y no observas el dominio, la superficie o las curvas de nivel?",
+    "enlace_siguiente_contenido": "En el Contenido 3 estudiarás cómo se comportan estas funciones cerca de un punto y cómo medir cambios mediante derivadas parciales."
+  },
+  "plantilla_recomendada": {
+    "principal": "Carrusel de Imágenes",
+    "justificacion": "El contenido exige comparar varias representaciones visuales de una misma función: dominio, superficie, trazas y curvas de nivel. Un carrusel permite recorrerlas en orden y añadir explicación breve a cada imagen.",
+    "uso_pedagogico": "La plantilla debe mostrar para cada función una secuencia: fórmula, dominio, superficie, curvas de nivel, interpretación y alerta de error frecuente.",
+    "como_ayuda_al_estudiante": "Permite estudiar por capas y volver a cada representación sin saturar la pantalla.",
+    "componentes_que_deberia_activar": [
+      "Secuencia de imágenes con etiquetas.",
+      "Notas breves bajo cada imagen.",
+      "Comparación entre representaciones.",
+      "Preguntas de verificación.",
+      "Cierre con síntesis visual."
+    ],
+    "secundarias": [
+      {
+        "plantilla": "Infografías",
+        "uso": "Explicar tres miradas, restricciones y flujo de trabajo."
+      },
+      {
+        "plantilla": "Material Complementario",
+        "uso": "Incluir guía de GeoGebra, lectura Stewart y ejercicios."
+      },
+      {
+        "plantilla": "Carrusel de Notas Claves",
+        "uso": "Reforzar errores frecuentes y diferencias entre dominio, superficie y curva de nivel."
+      }
+    ]
+  },
+  "referencias_apa": [
+    {
+      "referencia": "Stewart, J. (s. f.). Cálculo de varias variables. Archivo local fuente_stewart_calculo_varias_variables.pdf.",
+      "nota": "Referencia provisional basada en el archivo suministrado. No se inventan datos editoriales adicionales."
+    },
+    {
+      "referencia": "MIT OpenCourseWare. (s. f.). 18.02SC Multivariable Calculus.",
+      "nota": "Fuente complementaria abierta para organización conceptual y recursos de autoestudio."
+    },
+    {
+      "referencia": "Paul's Online Notes. (s. f.). Calculus III.",
+      "nota": "Fuente complementaria abierta para práctica guiada y ejercicios."
+    }
+  ],
+  "control_calidad": {
+    "json_valido": "Pendiente de validación técnica posterior a la escritura.",
+    "aprendizaje_guiado": "Cumple: activa saber previo, orienta acción de estudio, propone práctica guiada, evidencia y cierre.",
+    "trazabilidad": "RA 1 -> S1 y S2 -> dominios, superficies y curvas de nivel -> reporte gráfico -> rúbrica cualitativa.",
+    "graficos_planificados": 4,
+    "podcast_planificado": 1,
+    "no_genera_html_pdf_audio_imagen_final": true
+  }
+}</script>
+  <script>
+    const data = JSON.parse(document.getElementById('content-data').textContent);
+    const order = [
+      'metadatos', 'ubicacion_en_ruta', 'hilo_conductor', 'resultados_aprendizaje', 'saberes',
+      'momento_aprendizaje_guiado', 'introduccion', 'secuencia_explicativa', 'facilitadores_comprension',
+      'contenido_teorico_extenso', 'desarrollo_procedimental', 'ejemplos', 'problemas_resueltos',
+      'caso_o_aplicacion', 'practica_guiada', 'actividad', 'evidencia', 'criterios_cualitativos',
+      'retroalimentacion', 'cierre', 'plantilla_recomendada', 'referencias_apa', 'control_calidad'
+    ];
+    const skipInMain = new Set(['plantillas_catalogo_disponibles', 'graficos_y_representaciones']);
+    const labels = {
+      metadatos: 'Metadatos', ubicacion_en_ruta: 'Ubicación en la ruta', hilo_conductor: 'Hilo conductor',
+      resultados_aprendizaje: 'Resultados de aprendizaje', saberes: 'Saberes',
+      momento_aprendizaje_guiado: 'Momento de aprendizaje guiado', introduccion: 'Introducción',
+      secuencia_explicativa: 'Secuencia explicativa', facilitadores_comprension: 'Facilitadores de comprensión',
+      contenido_teorico_extenso: 'Contenido teórico extenso', desarrollo_procedimental: 'Desarrollo procedimental',
+      ejemplos: 'Ejemplos', problemas_resueltos: 'Problemas resueltos', caso_o_aplicacion: 'Caso o aplicación',
+      practica_guiada: 'Práctica guiada', actividad: 'Actividad', evidencia: 'Evidencia',
+      criterios_cualitativos: 'Criterios cualitativos', retroalimentacion: 'Retroalimentación', cierre: 'Cierre',
+      plantilla_recomendada: 'Plantilla recomendada', referencias_apa: 'Referencias APA', control_calidad: 'Control de calidad',
+      metodo_para_analizar_representaciones: 'Método para analizar representaciones', criterio_de_uso_de_herramienta: 'Criterio de uso de herramienta',
+      accion: 'Acción'
+    };
+
+    const root = document.getElementById('content-root');
+    const toc = document.getElementById('toc');
+
+    function humanize(key) {
+      return labels[key] || key.replaceAll('_', ' ').replace(/^./, c => c.toUpperCase());
+    }
+    function slugify(text) {
+      return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    }
+    function escapeText(value) {
+      return String(value).replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+    }
+    function itemTitle(obj, fallback) {
+      if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return fallback;
+      return obj.titulo || obj.nombre || obj.codigo || obj.termino || obj.nivel || obj.id || fallback;
+    }
+    function matchingGraphic(section, namePart) {
+      return (data.graficos_y_representaciones || []).find(graphic =>
+        graphic.ubicacion_en_contenido?.seccion === section &&
+        graphic.nombre_imagen.includes(namePart)
+      );
+    }
+    function renderGraphic(graphic) {
+      if (!graphic) return '';
+      const src = `imagenes_generadas/${escapeText(graphic.nombre_imagen)}`;
+      const purpose = graphic.ubicacion_en_contenido?.proposito_lectura || graphic.proposito || '';
+      return `<figure class="inline-figure">
+        <a href="${src}" target="_blank" rel="noopener">
+          <img src="${src}" alt="${escapeText(graphic.titulo)}" loading="lazy">
+        </a>
+        <figcaption>
+          <strong>${escapeText(graphic.titulo)}</strong>
+          <span>${escapeText(purpose)}</span>
+        </figcaption>
+      </figure>`;
+    }
+    function renderTheory(value) {
+      const restrictions = matchingGraphic('contenido_teorico_extenso', 'restricciones_dominio');
+      const threeViews = matchingGraphic('contenido_teorico_extenso', 'tres_miradas');
+      return `<div class="array">${value.map((item, idx) => {
+        const before = idx === 6 ? renderGraphic(threeViews) : '';
+        const after = idx === 1 ? renderGraphic(restrictions) : '';
+        return `${before}<article class="card">
+          <h3 class="card-title">${escapeText(item.titulo)}</h3>
+          ${(item.desarrollo || []).map(paragraph => `<p class="paragraph scalar">${escapeText(paragraph)}</p>`).join('')}
+        </article>${after}`;
+      }).join('')}</div>`;
+    }
+    function renderDevelopment(value) {
+      const flow = matchingGraphic('desarrollo_procedimental', 'flujo_geogebra');
+      return `${renderValue(value, 'desarrollo_procedimental')}${renderGraphic(flow)}`;
+    }
+    function renderProblem(problem, idx) {
+      const semisphere = idx === 0 ? matchingGraphic('problemas_resueltos', 'semiesfera_niveles') : null;
+      const fields = Object.entries(problem)
+        .filter(([key]) => !['titulo', 'solucion_paso_a_paso'].includes(key))
+        .map(([key, value]) => `<div class="field"><p class="key">${humanize(key)}</p>${renderValue(value, key)}</div>`)
+        .join('');
+      const steps = (problem.solucion_paso_a_paso || []).map(step => {
+        const stepNumber = Number(step.paso);
+        return `<article class="card">
+          <h4 class="card-title">Paso ${escapeText(step.paso)}. ${escapeText(step.descripcion)}</h4>
+          <p class="paragraph scalar">${escapeText(step.desarrollo)}</p>
+        </article>${idx === 0 && stepNumber === 4 ? renderGraphic(semisphere) : ''}`;
+      }).join('');
+      return `<article class="card">
+        <h3 class="card-title">${escapeText(problem.titulo)}</h3>
+        <div class="obj">${fields}</div>
+        <div class="field">
+          <p class="key">Solución paso a paso</p>
+          <div class="array">${steps}</div>
+        </div>
+      </article>`;
+    }
+    function renderProblems(value) {
+      return `<div class="array">${value.map((problem, idx) => renderProblem(problem, idx)).join('')}</div>`;
+    }
+    function renderSectionContent(key, value) {
+      if (key === 'contenido_teorico_extenso') return renderTheory(value);
+      if (key === 'desarrollo_procedimental') return renderDevelopment(value);
+      if (key === 'problemas_resueltos') return renderProblems(value);
+      return renderValue(value, key);
+    }
+    function renderValue(value, key = '') {
+      if (value === null || value === undefined || value === '') return '<span class="empty">Sin información</span>';
+      if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+        const text = escapeText(value);
+        if (typeof value === 'string' && value.length > 180) return `<p class="paragraph scalar">${text}</p>`;
+        return `<span class="scalar">${text}</span>`;
+      }
+      if (Array.isArray(value)) {
+        if (value.every(v => typeof v === 'string' || typeof v === 'number')) {
+          return `<ul class="array strings">${value.map(v => `<li>${escapeText(v)}</li>`).join('')}</ul>`;
+        }
+        return `<div class="array">${value.map((item, idx) => `
+          <article class="card">
+            ${typeof item === 'object' && item !== null ? `<h3 class="card-title">${escapeText(itemTitle(item, `${humanize(key)} ${idx + 1}`))}</h3>` : ''}
+            ${renderValue(item, key)}
+          </article>`).join('')}</div>`;
+      }
+      const entries = Object.entries(value);
+      if (!entries.length) return '<span class="empty">Sin información</span>';
+      return `<div class="obj">${entries.map(([k, v]) => {
+        const compact = typeof v === 'string' && v.length > 220;
+        return `<div class="field${compact ? ' compact' : ''}"><p class="key">${humanize(k)}</p>${renderValue(v, k)}</div>`;
+      }).join('')}</div>`;
+    }
+
+    const keys = [...order, ...Object.keys(data).filter(k => !order.includes(k))].filter(k => k in data && !skipInMain.has(k));
+    toc.innerHTML = keys.map((key, idx) => {
+      const title = humanize(key);
+      const id = slugify(title);
+      return `<a href="#${id}">${String(idx + 1).padStart(2, '0')}. ${title}</a>`;
+    }).join('');
+
+    root.innerHTML = keys.map((key, idx) => {
+      const title = humanize(key);
+      const id = slugify(title);
+      return `<section class="content-section" id="${id}">
+        <h2 class="section-title"><span class="index">${String(idx + 1).padStart(2, '0')}</span>${title}</h2>
+        ${renderSectionContent(key, data[key])}
+      </section>`;
+    }).join('');
+  </script>
+</body>
+</html>

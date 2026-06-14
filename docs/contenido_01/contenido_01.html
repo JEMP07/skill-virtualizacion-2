@@ -1,0 +1,1060 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Funciones escalares y vectoriales como modelos espaciales</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5d687b;
+      --line: #d9e2ef;
+      --soft: #f5f8fc;
+      --panel: #ffffff;
+      --blue: #1456a3;
+      --green: #14795d;
+      --orange: #c96f1a;
+      --red: #b83328;
+      --shadow: 0 18px 45px rgba(21, 41, 74, .10);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #eef3f8;
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.58;
+    }
+    a { color: var(--blue); }
+    .layout { min-height: 100vh; }
+    .hero {
+      background: linear-gradient(135deg, #0d3769 0%, #176a82 54%, #27734f 100%);
+      color: white;
+      padding: 44px max(24px, calc((100vw - 1180px) / 2)) 34px;
+    }
+    .eyebrow {
+      margin: 0 0 10px;
+      font-size: 14px;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      opacity: .86;
+      font-weight: 700;
+    }
+    h1 {
+      margin: 0;
+      max-width: 980px;
+      font-size: clamp(32px, 6vw, 58px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+    .hero-summary {
+      max-width: 920px;
+      margin: 20px 0 0;
+      font-size: 18px;
+      color: rgba(255,255,255,.92);
+    }
+    .meta-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .chip {
+      border: 1px solid rgba(255,255,255,.34);
+      background: rgba(255,255,255,.12);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      backdrop-filter: blur(8px);
+    }
+    .shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 24px;
+      padding: 24px 0 56px;
+    }
+    nav {
+      align-self: start;
+      position: sticky;
+      top: 16px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+      max-height: calc(100vh - 32px);
+      overflow: auto;
+    }
+    nav h2 { margin: 0 0 10px; font-size: 15px; color: var(--muted); }
+    nav a {
+      display: block;
+      padding: 8px 10px;
+      border-radius: 6px;
+      text-decoration: none;
+      color: var(--ink);
+      font-size: 14px;
+    }
+    nav a:hover { background: var(--soft); color: var(--blue); }
+    main { min-width: 0; }
+    section.content-section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: clamp(18px, 3vw, 30px);
+      margin-bottom: 22px;
+    }
+    .section-title {
+      margin: 0 0 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--line);
+      font-size: clamp(24px, 3vw, 34px);
+      line-height: 1.16;
+      color: #102444;
+    }
+    .section-title .index { color: var(--blue); font-size: .72em; margin-right: 8px; }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+    .image-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fbfdff;
+    }
+    .image-card img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: contain;
+      background: white;
+      border-bottom: 1px solid var(--line);
+    }
+    .image-card div { padding: 14px; }
+    .image-card h3 { margin: 0 0 6px; font-size: 18px; line-height: 1.25; }
+    .image-card p { margin: 0 0 8px; color: var(--muted); }
+    .inline-figure {
+      margin: 18px 0 22px;
+    }
+    .inline-figure img {
+      aspect-ratio: auto;
+      object-fit: contain;
+    }
+    .inline-figure figcaption {
+      display: grid;
+      gap: 4px;
+      padding: 14px;
+      color: var(--muted);
+    }
+    .inline-figure figcaption strong {
+      color: var(--ink);
+      font-size: 18px;
+    }
+    .file-name { font-family: Consolas, 'Courier New', monospace; font-size: 12px; color: var(--green) !important; overflow-wrap: anywhere; }
+    .obj { display: grid; gap: 14px; }
+    .field {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 14px;
+    }
+    .field > .key {
+      margin: 0 0 8px;
+      color: var(--blue);
+      font-weight: 700;
+      font-size: 15px;
+    }
+    .field.compact { background: transparent; border: 0; padding: 0; }
+    .array { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+    .array.strings { padding-left: 20px; list-style: disc; display: block; }
+    .array.strings li { margin: 5px 0; }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      padding: 14px;
+    }
+    .card-title { margin: 0 0 8px; color: #14223a; font-size: 18px; }
+    .paragraph { margin: 0 0 10px; }
+    .scalar { white-space: pre-wrap; overflow-wrap: anywhere; }
+    .empty { color: var(--muted); font-style: italic; }
+    footer { color: var(--muted); text-align: center; padding: 0 0 34px; }
+    @media (max-width: 880px) {
+      .shell { grid-template-columns: 1fr; }
+      nav { position: static; max-height: none; }
+      .gallery { grid-template-columns: 1fr; }
+      .hero { padding-top: 34px; }
+    }
+    @media print {
+      body { background: white; }
+      nav { display: none; }
+      .shell { display: block; width: 100%; padding: 0; }
+      section.content-section { box-shadow: none; break-inside: avoid; }
+      .hero { background: white; color: var(--ink); padding: 20px 0; }
+      .hero-summary { color: var(--ink); }
+      .chip { color: var(--ink); border-color: var(--line); background: white; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <header class="hero">
+      <p class="eyebrow">Análisis Vectorial</p>
+      <h1>Funciones escalares y vectoriales como modelos espaciales</h1>
+      <p class="hero-summary">Bienvenido al primer contenido de Análisis Vectorial. En cursos anteriores, probablemente trabajaste con funciones como y = f(x), donde una variable de entrada produce un valor de salida. Esa idea sigue viva aquí, pero se vuelve más rica: ahora una magnitud puede depender de dos, tres o más variables. Por ejemplo, la presión en un punto del subsuelo puede depender de la posición horizontal, la profundidad y el tiempo; la temperatura de una placa puede depender de dos coordenadas; la velocidad de un fluido no solo tiene tamaño, sino también dirección. En este contenido aprenderás a mirar una expresión matemática antes de manipularla. La pregunta inicial no será &#x27;¿qué fórmula aplico?&#x27;, sino &#x27;¿qué entra en esta función, qué sale de ella, dónde tiene sentido y qué representa?&#x27;. Esta forma de lectura será la base para derivar, optimizar e integrar más adelante.</p>
+      <div class="meta-strip">
+        <span class="chip">Programa: Ingeniería de Petróleos</span>
+        <span class="chip">Contenido 01</span>
+        <span class="chip">HTML generado desde contenido_01.json</span>
+        <span class="chip">4 infograf?as generadas</span>
+      </div>
+    </header>
+
+    <div class="shell">
+      <nav aria-label="Navegaci?n del contenido">
+        <h2>Contenido</h2>
+        <div id="toc"></div>
+      </nav>
+
+      <main>
+        <div id="content-root"></div>
+      </main>
+    </div>
+    <footer>Archivo aut?nomo generado desde JSON e infograf?as locales.</footer>
+  </div>
+
+  <script type="application/json" id="content-data">{
+  "metadatos": {
+    "numero_contenido": 1,
+    "titulo": "Funciones escalares y vectoriales como modelos espaciales",
+    "slug": "funciones_escalares_vectoriales",
+    "asignatura": "Análisis Vectorial",
+    "programa": "Ingeniería de Petróleos",
+    "creditos": 3,
+    "version": "1.0",
+    "fecha_generacion": "2026-06-14",
+    "fase": "Fase 5 - Producción progresiva de contenidos",
+    "fuentes_usadas": [
+      {
+        "tipo": "fuente_base",
+        "referencia": "Stewart, archivo local fuente_stewart_calculo_varias_variables.pdf",
+        "uso": "Base conceptual para funciones de varias variables, dominio, rango, funciones escalares, representación espacial y lectura inicial de modelos multivariables."
+      },
+      {
+        "tipo": "fuente_complementaria",
+        "referencia": "MIT OpenCourseWare 18.02SC Multivariable Calculus",
+        "uso": "Apoyo para enfoque de autoestudio y organización conceptual de cálculo multivariable."
+      },
+      {
+        "tipo": "fuente_complementaria",
+        "referencia": "Paul's Online Notes - Calculus III",
+        "uso": "Apoyo para práctica guiada y formulación de ejercicios de cálculo multivariable."
+      }
+    ],
+    "nota_editorial": "El sílabo cita Stewart 2018, octava edición. El archivo local suministrado por el usuario se toma como fuente base autorizada para esta virtualización."
+  },
+  "ubicacion_en_ruta": {
+    "introduccion_general": "Este contenido abre la ruta de Análisis Vectorial. Antes de calcular derivadas parciales, optimizar o integrar sobre regiones, el estudiante necesita reconocer qué tipo de objeto matemático tiene delante: una función escalar, una función vectorial, una entrada de dos o más variables, un dominio restringido o una salida que representa magnitud, posición, dirección o campo.",
+    "contenido_anterior": "Es el punto de entrada de la ruta. Retoma presaberes de funciones de una variable, plano cartesiano, coordenadas, álgebra elemental, intervalos, desigualdades y lectura básica de gráficas.",
+    "contenido_siguiente": "El siguiente contenido profundiza en dominios, superficies y curvas de nivel con apoyo gráfico. Por eso este contenido deja instaladas las preguntas: ¿cuáles variables entran?, ¿qué sale?, ¿dónde está definida la función? y ¿cómo se interpreta esa salida?",
+    "cierre_integrador_final": "Este contenido aporta el vocabulario base para toda la asignatura. Las funciones escalares serán necesarias para derivadas parciales, gradientes, planos tangentes, optimización e integrales múltiples. Las funciones vectoriales preparan la comprensión de campos vectoriales e integrales de línea.",
+    "ruta_completa": [
+      "1. Funciones escalares y vectoriales como modelos espaciales",
+      "2. Dominios, curvas de nivel y superficies con apoyo gráfico",
+      "3. Límites, continuidad y derivadas parciales",
+      "4. Gradiente, derivadas direccionales y plano tangente",
+      "5. Optimización y multiplicadores de Lagrange",
+      "6. Integrales dobles, triples y cambio de coordenadas",
+      "7. Campos vectoriales, integrales de línea y teorema de Green"
+    ]
+  },
+  "hilo_conductor": {
+    "pregunta": "¿Cómo usar el cálculo vectorial para representar, derivar, optimizar e integrar fenómenos espaciales asociados a problemas de ingeniería?",
+    "situacion_narrativa": "Un equipo de ingeniería necesita describir magnitudes que cambian en el espacio: temperatura, presión, concentración, elevación, densidad, velocidad o fuerza. Algunas magnitudes entregan un solo valor en cada punto; otras entregan una dirección y una intensidad. La diferencia entre esos dos casos define el primer paso para modelar.",
+    "conexion_con_contenido": "El Contenido 1 enseña a reconocer la estructura de un modelo: entradas, salida, dominio, rango y tipo de función. Esa lectura evita que el estudiante empiece a calcular sin saber qué representa la expresión matemática."
+  },
+  "plantillas_catalogo_disponibles": [
+    "SCORM",
+    "Carrusel de Imágenes",
+    "Carrusel de Notas Claves",
+    "Flash Card",
+    "Acordeón",
+    "Carrusel de Ejercicios Paso a Paso",
+    "Visualización con Pestañas",
+    "Infografías",
+    "Componentes de Referencias",
+    "Material Complementario",
+    "Infografía"
+  ],
+  "resultados_aprendizaje": [
+    {
+      "codigo": "RA 1",
+      "descripcion": "Interpreto los conceptos y técnicas básicas de una función en varias variables y sus derivadas parciales.",
+      "relacion_con_contenido": "Este contenido trabaja la primera parte del RA: interpretar funciones de varias variables antes de aplicar técnicas de derivación parcial."
+    }
+  ],
+  "saberes": {
+    "conceptuales": [
+      "Función de una variable como presaber.",
+      "Función de varias variables.",
+      "Variable independiente, variable dependiente, entrada y salida.",
+      "Función escalar.",
+      "Función vectorial.",
+      "Dominio y rango.",
+      "Restricción matemática y restricción contextual."
+    ],
+    "procedimentales": [
+      "Identificar variables de entrada y salida.",
+      "Clasificar funciones como escalares o vectoriales.",
+      "Determinar condiciones iniciales del dominio.",
+      "Representar verbalmente el significado de una función.",
+      "Interpretar una situación de ingeniería como modelo funcional."
+    ],
+    "actitudinales": [
+      "Evitar el cálculo mecánico sin interpretación.",
+      "Explicar con claridad qué representa cada variable.",
+      "Usar tecnología de manera crítica para visualizar y verificar.",
+      "Reconocer errores propios en la lectura de modelos matemáticos."
+    ]
+  },
+  "momento_aprendizaje_guiado": {
+    "momento_dominante": "Saber previo",
+    "momentos_integrados": [
+      "Saber previo",
+      "Acción de estudio",
+      "Práctica guiada",
+      "Evidencia parcial",
+      "Cierre integrador"
+    ],
+    "justificacion": "El contenido abre la ruta y activa los saberes necesarios para comprender cálculo multivariable. Aunque se introducen conceptos nuevos, el énfasis es conectar lo que el estudiante ya conoce sobre funciones de una variable con modelos que dependen de dos o más variables."
+  },
+  "introduccion": "Bienvenido al primer contenido de Análisis Vectorial. En cursos anteriores, probablemente trabajaste con funciones como y = f(x), donde una variable de entrada produce un valor de salida. Esa idea sigue viva aquí, pero se vuelve más rica: ahora una magnitud puede depender de dos, tres o más variables. Por ejemplo, la presión en un punto del subsuelo puede depender de la posición horizontal, la profundidad y el tiempo; la temperatura de una placa puede depender de dos coordenadas; la velocidad de un fluido no solo tiene tamaño, sino también dirección. En este contenido aprenderás a mirar una expresión matemática antes de manipularla. La pregunta inicial no será '¿qué fórmula aplico?', sino '¿qué entra en esta función, qué sale de ella, dónde tiene sentido y qué representa?'. Esta forma de lectura será la base para derivar, optimizar e integrar más adelante.",
+  "secuencia_explicativa": [
+    {
+      "orden": 1,
+      "titulo": "Volver a la función de una variable",
+      "descripcion": "Se parte de la idea conocida: una función asigna a cada entrada permitida una salida. Se recuerda que el dominio indica dónde la función tiene sentido y que el rango describe los valores que puede producir."
+    },
+    {
+      "orden": 2,
+      "titulo": "Ampliar la entrada",
+      "descripcion": "Se muestra que una función puede depender de dos o más variables. En lugar de una entrada x, aparecen pares, ternas o vectores de entrada como (x, y) o (x, y, z)."
+    },
+    {
+      "orden": 3,
+      "titulo": "Diferenciar salida escalar y salida vectorial",
+      "descripcion": "Se explica que una función escalar entrega un número, mientras que una función vectorial entrega un vector. Esta diferencia será decisiva para superficies, campos y trayectorias."
+    },
+    {
+      "orden": 4,
+      "titulo": "Leer dominio y rango",
+      "descripcion": "Se estudian restricciones matemáticas como raíces, denominadores y logaritmos, y restricciones contextuales como profundidad positiva, tiempo no negativo o coordenadas dentro de una región física."
+    },
+    {
+      "orden": 5,
+      "titulo": "Clasificar situaciones",
+      "descripcion": "Se analizan casos breves y se decide si el modelo es escalar o vectorial, qué variables entran, cuál es la salida y qué interpretación tiene."
+    },
+    {
+      "orden": 6,
+      "titulo": "Cerrar con una matriz de lectura",
+      "descripcion": "El estudiante aplica una matriz sencilla: variables de entrada, salida, tipo de función, dominio, rango esperado y sentido contextual."
+    }
+  ],
+  "facilitadores_comprension": {
+    "analogias": [
+      {
+        "concepto": "Función de varias variables",
+        "analogia": "Es como una máquina que no recibe una sola perilla de control, sino varias. El resultado depende de la combinación de todas las perillas."
+      },
+      {
+        "concepto": "Función escalar",
+        "analogia": "Se parece a un termómetro colocado en cada punto: en cada ubicación entrega un número, como temperatura o presión."
+      },
+      {
+        "concepto": "Función vectorial",
+        "analogia": "Se parece a una flecha colocada en cada punto: no solo dice cuánto, sino hacia dónde."
+      }
+    ],
+    "glosario_minimo": [
+      {
+        "termino": "Entrada",
+        "explicacion": "Valor o conjunto de valores que se entregan a la función."
+      },
+      {
+        "termino": "Salida",
+        "explicacion": "Resultado que produce la función para una entrada permitida."
+      },
+      {
+        "termino": "Dominio",
+        "explicacion": "Conjunto de entradas para las cuales la función está definida y tiene sentido."
+      },
+      {
+        "termino": "Rango",
+        "explicacion": "Conjunto de salidas posibles de la función."
+      },
+      {
+        "termino": "Escalar",
+        "explicacion": "Cantidad representada por un solo número, como temperatura, presión, masa o densidad."
+      },
+      {
+        "termino": "Vector",
+        "explicacion": "Cantidad con componentes, usualmente asociada a dirección y magnitud, como velocidad, fuerza o desplazamiento."
+      }
+    ],
+    "preguntas_verificacion": [
+      "¿Cuántas variables de entrada tiene la función?",
+      "¿La salida es un número o un vector?",
+      "¿Hay restricciones por raíces, divisiones, logaritmos o sentido físico?",
+      "¿Qué representa la función en palabras?",
+      "¿Qué tendría que graficarse: una curva, una superficie, una región o un campo?"
+    ],
+    "ideas_clave": [
+      "Antes de calcular, se interpreta.",
+      "Una función de varias variables no siempre se puede dibujar completa, pero sí se puede describir con entradas, salidas y restricciones.",
+      "Una salida escalar responde 'cuánto hay'; una salida vectorial suele responder 'cuánto y hacia dónde'.",
+      "El dominio no es un trámite algebraico: dice dónde el modelo tiene sentido."
+    ],
+    "errores_frecuentes": [
+      "Creer que toda función con dos variables es automáticamente vectorial.",
+      "Confundir una superficie z = f(x, y) con una función vectorial.",
+      "Olvidar restricciones del dominio por denominadores iguales a cero.",
+      "Aceptar valores físicamente imposibles, como profundidad negativa, solo porque la fórmula algebraica los permite.",
+      "Decir que el rango es 'todos los reales' sin analizar la expresión."
+    ],
+    "explicacion_alternativa": "Si una función recibe una ubicación y devuelve una medición, probablemente es escalar. Si recibe una ubicación y devuelve una flecha o varias componentes, probablemente es vectorial. La clave no está en cuántas letras aparecen en la fórmula, sino en la naturaleza de la salida."
+  },
+  "contenido_teorico_extenso": [
+    {
+      "titulo": "1. La función como relación controlada entre entrada y salida",
+      "desarrollo": [
+        "Una función es una regla de asignación. Esta frase parece simple, pero sostiene buena parte del cálculo. Cuando se dice que y = f(x), se afirma que cada valor permitido de x produce un valor de y. La palabra permitido es esencial: no todos los valores imaginables pueden entrar en una función. Si aparece una raíz cuadrada, una división, un logaritmo o una restricción del contexto, el conjunto de entradas se reduce. A ese conjunto de entradas permitidas se le llama dominio.",
+        "En cálculo de una variable, la entrada suele representarse por un número real x. La salida también suele ser un número real. Esto permite representar la función mediante una curva en el plano. Sin embargo, muchas situaciones de ingeniería no dependen de una sola variable. La temperatura de una lámina metálica puede cambiar con la coordenada horizontal y la coordenada vertical. La presión en una formación puede variar con la profundidad, la posición y el tiempo. La concentración de una sustancia puede depender de la ubicación espacial. Cuando la realidad exige más de una entrada, el lenguaje de funciones de una variable ya no alcanza.",
+        "Una función de varias variables conserva la idea fundamental de asignación, pero amplía la entrada. En lugar de recibir x, recibe un par (x, y), una terna (x, y, z) o un conjunto de variables. Por ejemplo, f(x, y) puede representar la temperatura en el punto (x, y) de una placa. La salida sigue siendo un número si la función es escalar. En ese caso, la función no entrega una flecha ni una lista de componentes: entrega una magnitud."
+      ]
+    },
+    {
+      "titulo": "2. Variables independientes, variable dependiente y lectura del modelo",
+      "desarrollo": [
+        "En una función de varias variables, las variables independientes son las entradas. Si se escribe T(x, y), se está diciendo que T depende de x y de y. El símbolo T puede representar temperatura, pero también podría representar presión, elevación o densidad. Por eso no basta leer letras: hay que leer significado. La misma forma algebraica puede representar fenómenos muy distintos si cambian las unidades, el contexto y la interpretación.",
+        "La variable dependiente es la salida. En una función escalar de dos variables, como z = f(x, y), la salida se suele llamar z. Pero z no tiene que ser una altura geométrica. Puede ser una temperatura, una presión o una concentración. Cuando se grafica z = f(x, y), la representación se ve como una superficie en el espacio tridimensional; aun así, la función sigue siendo escalar porque para cada par (x, y) produce un solo número.",
+        "Una forma útil de leer cualquier modelo es preguntar: ¿qué valores ingreso?, ¿qué obtiene la función?, ¿qué unidades tienen las entradas?, ¿qué unidades tiene la salida?, ¿hay valores prohibidos?, ¿la salida es un número o un vector? Estas preguntas evitan errores posteriores. Un estudiante puede derivar correctamente una expresión y aun así interpretar mal el resultado si no sabe qué representa cada variable."
+      ]
+    },
+    {
+      "titulo": "3. Funciones escalares: magnitudes en el espacio",
+      "desarrollo": [
+        "Una función escalar de varias variables asigna un número a cada punto de su dominio. Si f(x, y) = x^2 + y^2, cada punto del plano recibe un valor numérico. Ese valor puede interpretarse geométricamente como una altura, pero también puede leerse como energía, distancia cuadrática, presión idealizada o cualquier magnitud que el contexto permita. Lo escalar está en la salida: un solo número.",
+        "Las funciones escalares aparecen constantemente en ingeniería. Una función P(x, y, z) puede representar presión en una región tridimensional. Una función rho(x, y, z) puede representar densidad. Una función h(x, y) puede representar elevación de una superficie. En cada caso, la entrada ubica un punto y la salida cuantifica algo en ese punto. Esta estructura será clave para derivadas parciales: cuando se derive con respecto a x, se preguntará cómo cambia la magnitud si x varía y las demás variables se mantienen fijas.",
+        "Es importante no confundir la gráfica de una función escalar con su tipo de salida. Una función f(x, y) puede graficarse como una superficie, y una superficie se ve como un objeto tridimensional. Pero la salida de f en cada punto no es un vector tridimensional: es un número. La gráfica usa tres dimensiones para representar dos entradas y una salida escalar. Esa distinción prepara el terreno para entender campos vectoriales más adelante."
+      ]
+    },
+    {
+      "titulo": "4. Funciones vectoriales: salidas con componentes",
+      "desarrollo": [
+        "Una función vectorial entrega una salida con componentes. Por ejemplo, F(x, y) = (P(x, y), Q(x, y)) asigna a cada punto del plano un vector de dos componentes. Si se trabaja en el espacio, una función vectorial puede tener tres componentes: F(x, y, z) = (P(x, y, z), Q(x, y, z), R(x, y, z)). La salida ya no es una sola magnitud; puede representar velocidad, fuerza, desplazamiento o flujo.",
+        "La idea de función vectorial puede aparecer de dos maneras. Una curva parametrizada r(t) = (x(t), y(t), z(t)) recibe un parámetro t y entrega un punto o vector de posición en el espacio. Un campo vectorial F(x, y) recibe un punto y entrega una flecha asociada a ese punto. Ambas son funciones vectoriales, pero cumplen roles distintos. En este primer contenido solo se necesita reconocer que la salida tiene varias componentes y que eso cambia la forma de interpretar el modelo.",
+        "Un error común consiste en pensar que toda función con varias variables es vectorial. No es así. f(x, y) = x + y tiene dos variables de entrada, pero una salida escalar. En cambio, F(x, y) = (x + y, x - y) tiene dos variables de entrada y una salida vectorial de dos componentes. La clasificación depende de la salida, no solo de la cantidad de variables de entrada."
+      ]
+    },
+    {
+      "titulo": "5. Dominio: dónde vive la función",
+      "desarrollo": [
+        "El dominio de una función de varias variables es el conjunto de entradas para las que la función está definida. En una variable, el dominio suele ser un intervalo o unión de intervalos. En dos variables, el dominio suele ser una región del plano. En tres variables, puede ser una región del espacio. Esta diferencia exige pensar geométricamente: no solo se buscan números permitidos, sino regiones permitidas.",
+        "Las restricciones algebraicas más frecuentes son conocidas. Si hay un denominador, no puede ser cero. Si hay una raíz de índice par, el radicando debe ser mayor o igual que cero. Si hay un logaritmo, el argumento debe ser positivo. En varias variables, estas condiciones se traducen en desigualdades que describen regiones. Por ejemplo, en f(x, y) = sqrt(9 - x^2 - y^2), el dominio exige 9 - x^2 - y^2 >= 0, es decir, x^2 + y^2 \u003c= 9. Esa condición describe un disco de radio 3.",
+        "Además del dominio algebraico, existe el dominio contextual. Una fórmula puede admitir ciertos valores, pero el fenómeno puede prohibirlos. Si z representa profundidad medida hacia abajo, quizá se exija z >= 0. Si t representa tiempo, normalmente t >= 0. Si una coordenada describe distancia dentro de una muestra cilíndrica, no cualquier punto del plano tiene sentido. La matemática ofrece un dominio posible; el contexto lo ajusta."
+      ]
+    },
+    {
+      "titulo": "6. Rango: qué valores puede producir la función",
+      "desarrollo": [
+        "El rango es el conjunto de salidas que la función puede producir. En funciones de varias variables, determinarlo puede ser más difícil que hallar el dominio. Aun así, una lectura inicial del rango ayuda a interpretar el modelo. Si f(x, y) = x^2 + y^2, la salida nunca es negativa. Por tanto, el rango es y >= 0 si no hay restricciones adicionales. Si f(x, y) = sqrt(9 - x^2 - y^2), la salida va de 0 a 3 dentro de su dominio.",
+        "En contextos de ingeniería, el rango también debe leerse con cuidado. Una presión negativa podría no tener sentido en cierto modelo; una densidad no debería ser menor que cero; una concentración tiene límites físicos. Si el rango calculado contradice el contexto, puede haber un problema de modelación o una interpretación equivocada de variables.",
+        "Para una función vectorial, hablar de rango significa describir el conjunto de vectores que puede producir. Esto puede ser más complejo, pero la idea sigue siendo la misma: no solo importa dónde se evalúa la función, sino qué salidas son posibles. En contenidos posteriores, esta idea será importante para entender campos vectoriales y trayectorias."
+      ]
+    },
+    {
+      "titulo": "7. Funciones como modelos en ingeniería",
+      "desarrollo": [
+        "En ingeniería, una función no es solo una expresión algebraica. Es una forma de representar una relación entre variables. Si se estudia una propiedad del subsuelo, una función puede aproximar cómo cambia una magnitud con la posición. Si se analiza flujo, un campo vectorial puede representar dirección e intensidad del movimiento. Si se busca optimizar un diseño, una función objetivo puede representar costo, volumen, energía o rendimiento.",
+        "El primer paso de la modelación es decidir qué variables importan. Una simplificación puede reducir un fenómeno complejo a dos variables para hacerlo tratable. Otra modelación puede requerir tres variables espaciales y el tiempo. No hay una única forma de modelar; por eso el estudiante debe aprender a justificar sus elecciones. En este contenido no se exige construir modelos avanzados, pero sí leerlos con criterio.",
+        "Una buena lectura de modelo incluye unidades. Si x e y son distancias en metros y f(x, y) es temperatura en grados Celsius, entonces una derivada parcial posterior tendrá unidades de grados Celsius por metro. Aunque todavía no se están calculando derivadas, esta conciencia de unidades prepara una interpretación más rigurosa de los resultados futuros."
+      ]
+    },
+    {
+      "titulo": "8. De la clasificación al cálculo",
+      "desarrollo": [
+        "Clasificar una función no es una tarea menor. Si la función es escalar, se puede pensar en superficies, curvas de nivel, gradiente, optimización e integrales múltiples. Si la función es vectorial, se abren ideas como trayectorias, campos, flujo, trabajo e integrales de línea. En ambos casos, el cálculo que vendrá después depende de saber qué objeto se tiene.",
+        "La ruta del curso avanzará desde esta lectura inicial hacia herramientas más potentes. En el Contenido 2, las funciones escalares de dos variables se mirarán mediante dominios, superficies y curvas de nivel. En el Contenido 3, se estudiará cómo se comportan cerca de un punto mediante límites, continuidad y derivadas parciales. En el Contenido 4, el gradiente organizará la dirección de mayor cambio. En el Contenido 5, se optimizarán funciones. Luego se integrarán magnitudes en regiones y se trabajará con campos vectoriales.",
+        "Por eso este primer contenido funciona como una brújula. No entrega todas las técnicas, pero enseña a reconocer el terreno. Antes de avanzar, el estudiante debe poder mirar una expresión como f(x, y), F(x, y), r(t) o P(x, y, z) y explicar qué entra, qué sale, dónde está definida y qué podría representar."
+      ]
+    }
+  ],
+  "desarrollo_procedimental": {
+    "metodo_general_lectura_funcion": [
+      {
+        "paso": 1,
+        "accion": "Identificar las variables de entrada.",
+        "detalle": "Preguntar si la función recibe un número, un par ordenado, una terna o un parámetro. Ejemplo: f(x, y) recibe dos entradas; r(t) recibe un parámetro; P(x, y, z) recibe tres coordenadas."
+      },
+      {
+        "paso": 2,
+        "accion": "Identificar la salida.",
+        "detalle": "Determinar si la salida es un solo número o una lista de componentes. Si es un número, la función es escalar. Si es un vector, la función es vectorial."
+      },
+      {
+        "paso": 3,
+        "accion": "Revisar restricciones algebraicas.",
+        "detalle": "Buscar raíces pares, denominadores, logaritmos y expresiones que impongan condiciones. Traducir cada condición a desigualdad o exclusión."
+      },
+      {
+        "paso": 4,
+        "accion": "Revisar restricciones contextuales.",
+        "detalle": "Preguntar si las variables representan tiempo, distancia, profundidad, presión, concentración u otra magnitud que limite los valores posibles."
+      },
+      {
+        "paso": 5,
+        "accion": "Describir el dominio.",
+        "detalle": "Expresar el dominio en palabras, desigualdades o región geométrica. En dos variables, intentar leerlo como región del plano."
+      },
+      {
+        "paso": 6,
+        "accion": "Describir el rango esperado.",
+        "detalle": "Estimar qué salidas son posibles. No siempre se necesita una demostración completa al inicio, pero sí una lectura coherente."
+      },
+      {
+        "paso": 7,
+        "accion": "Explicar el modelo en una frase.",
+        "detalle": "Redactar una frase del tipo: 'Esta función recibe una ubicación y devuelve una magnitud escalar', o 'Este campo recibe una ubicación y devuelve una flecha de velocidad'."
+      }
+    ],
+    "criterio_de_clasificacion": "La clasificación principal se hace por la salida. Entrada de varias variables con salida numérica: función escalar. Entrada de una o varias variables con salida vectorial: función vectorial. Una gráfica tridimensional de z = f(x, y) no convierte la función en vectorial; solo representa una salida escalar como altura."
+  },
+  "ejemplos": [
+    {
+      "titulo": "Ejemplo 1. Temperatura en una placa",
+      "situacion": "La temperatura T en una placa rectangular depende de la posición (x, y).",
+      "modelo": "T(x, y) = 30 + 2x - y",
+      "analisis": "Las entradas son x e y. La salida T es un número que representa temperatura. Por tanto, T es una función escalar de dos variables. Si la placa mide 4 metros por 2 metros, el dominio contextual podría ser 0 \u003c= x \u003c= 4 y 0 \u003c= y \u003c= 2. Aunque la fórmula algebraica aceptaría todos los pares reales, el modelo físico solo tiene sentido dentro de la placa.",
+      "aprendizaje": "El dominio contextual puede ser más pequeño que el dominio algebraico."
+    },
+    {
+      "titulo": "Ejemplo 2. Campo de velocidad en un plano",
+      "situacion": "Un fluido se mueve en una región plana y su velocidad depende de la posición.",
+      "modelo": "V(x, y) = (y, -x)",
+      "analisis": "Las entradas son x e y. La salida tiene dos componentes: una componente horizontal y una vertical. Por tanto, V es una función vectorial. En cada punto del plano, el modelo asigna una flecha. No tendría sentido graficarlo solo como una superficie z = f(x, y); se requiere representar flechas o componentes.",
+      "aprendizaje": "Una función vectorial puede interpretarse como campo si asigna un vector a cada punto de una región."
+    },
+    {
+      "titulo": "Ejemplo 3. Profundidad y presión",
+      "situacion": "En un modelo simplificado, la presión depende de la profundidad z.",
+      "modelo": "P(z) = P0 + rho g z",
+      "analisis": "La función tiene una sola variable de entrada, z, y una salida escalar P. Aunque pertenece a un contexto espacial, no es función de varias variables si solo depende de z. Si el modelo se ampliara a P(x, y, z), entonces sí sería una función escalar de tres variables.",
+      "aprendizaje": "El contexto espacial no basta; la cantidad de variables de entrada se lee en el modelo."
+    },
+    {
+      "titulo": "Ejemplo 4. Trayectoria de una partícula",
+      "situacion": "La posición de una partícula se describe con el tiempo.",
+      "modelo": "r(t) = (cos t, sin t, t)",
+      "analisis": "La entrada es t. La salida tiene tres componentes. Por tanto, r es una función vectorial de una variable. Describe una curva en el espacio. Aunque solo tenga una entrada, la salida vectorial hace que sea vectorial.",
+      "aprendizaje": "Una función puede ser vectorial aunque tenga una sola variable de entrada."
+    }
+  ],
+  "problemas_resueltos": [
+    {
+      "titulo": "Problema resuelto 1. Clasificar una función y determinar su dominio",
+      "nivel": "Universitario introductorio",
+      "contexto": "Una propiedad escalar de una superficie se aproxima mediante una función de dos variables.",
+      "enunciado": "Considere f(x, y) = sqrt(16 - x^2 - y^2). Clasifique la función, determine su dominio y describa una interpretación posible.",
+      "solucion_paso_a_paso": [
+        {
+          "paso": 1,
+          "descripcion": "Identificar entradas y salida.",
+          "desarrollo": "La función recibe dos entradas, x e y. Para cada par permitido, devuelve el valor sqrt(16 - x^2 - y^2), que es un número."
+        },
+        {
+          "paso": 2,
+          "descripcion": "Clasificar la función.",
+          "desarrollo": "Como la salida es un número, f es una función escalar de dos variables."
+        },
+        {
+          "paso": 3,
+          "descripcion": "Revisar restricción algebraica.",
+          "desarrollo": "La raíz cuadrada exige que 16 - x^2 - y^2 >= 0. Esto equivale a x^2 + y^2 \u003c= 16."
+        },
+        {
+          "paso": 4,
+          "descripcion": "Describir el dominio.",
+          "desarrollo": "El dominio es el disco cerrado de radio 4 centrado en el origen: todos los puntos (x, y) tales que x^2 + y^2 \u003c= 16."
+        },
+        {
+          "paso": 5,
+          "descripcion": "Interpretar.",
+          "desarrollo": "La función puede representar la altura de una semiesfera superior de radio 4 sobre el plano xy. También podría representar una magnitud máxima en el centro que disminuye hacia el borde, siempre que el contexto lo permita."
+        }
+      ],
+      "resultado": "Función escalar de dos variables, con dominio x^2 + y^2 \u003c= 16.",
+      "verificacion": "En el punto (0, 0), f = 4. En el punto (4, 0), f = 0. En el punto (5, 0), la expresión dentro de la raíz es negativa, por lo que no pertenece al dominio real.",
+      "transferencia": "Este tipo de dominio circular será útil para integrales dobles en coordenadas polares."
+    },
+    {
+      "titulo": "Problema resuelto 2. Distinguir campo vectorial de función escalar",
+      "nivel": "Universitario introductorio",
+      "contexto": "Un modelo simplificado describe movimiento horizontal de fluido en una sección plana.",
+      "enunciado": "Considere F(x, y) = (2x, -y). Clasifique la función, identifique entradas, salida y explique qué podría representar.",
+      "solucion_paso_a_paso": [
+        {
+          "paso": 1,
+          "descripcion": "Identificar entradas.",
+          "desarrollo": "La función recibe el par (x, y), es decir, una ubicación en el plano."
+        },
+        {
+          "paso": 2,
+          "descripcion": "Identificar salida.",
+          "desarrollo": "La salida es (2x, -y), un vector con dos componentes."
+        },
+        {
+          "paso": 3,
+          "descripcion": "Clasificar.",
+          "desarrollo": "Como la salida es vectorial, F es una función vectorial de dos variables. Si se interpreta punto por punto, es un campo vectorial."
+        },
+        {
+          "paso": 4,
+          "descripcion": "Leer componentes.",
+          "desarrollo": "La componente horizontal crece con x; la componente vertical apunta en sentido contrario a y. En puntos con y positivo, la componente vertical es negativa; en puntos con y negativo, es positiva."
+        },
+        {
+          "paso": 5,
+          "descripcion": "Interpretar.",
+          "desarrollo": "Podría representar una velocidad idealizada donde el movimiento horizontal aumenta al alejarse hacia la derecha y el componente vertical tiende a dirigir el movimiento hacia el eje x."
+        }
+      ],
+      "resultado": "Función vectorial de dos variables; puede interpretarse como campo vectorial plano.",
+      "verificacion": "En (1, 2), F(1, 2) = (2, -2). En (-1, 2), F(-1, 2) = (-2, -2). La salida no es una altura sino una flecha.",
+      "transferencia": "Esta lectura será necesaria en el Contenido 7 para integrales de línea y trabajo de campos vectoriales."
+    },
+    {
+      "titulo": "Problema resuelto 3. Dominio algebraico y dominio contextual",
+      "nivel": "Universitario introductorio con lectura de contexto",
+      "contexto": "Una función estima una propiedad C en una muestra rectangular de laboratorio.",
+      "enunciado": "Sea C(x, y) = ln(10 - x - 2y). Algebraicamente, determine el dominio. Luego ajuste el dominio si la muestra solo existe para 0 \u003c= x \u003c= 3 y 0 \u003c= y \u003c= 2.",
+      "solucion_paso_a_paso": [
+        {
+          "paso": 1,
+          "descripcion": "Identificar tipo de salida.",
+          "desarrollo": "C entrega un número, por lo que es una función escalar de dos variables."
+        },
+        {
+          "paso": 2,
+          "descripcion": "Aplicar restricción del logaritmo.",
+          "desarrollo": "El argumento del logaritmo debe ser positivo: 10 - x - 2y > 0."
+        },
+        {
+          "paso": 3,
+          "descripcion": "Describir dominio algebraico.",
+          "desarrollo": "La desigualdad equivale a x + 2y \u003c 10. Algebraicamente, el dominio es el semiplano por debajo de la recta x + 2y = 10, sin incluir la recta."
+        },
+        {
+          "paso": 4,
+          "descripcion": "Incorporar dominio contextual.",
+          "desarrollo": "La muestra solo existe para 0 \u003c= x \u003c= 3 y 0 \u003c= y \u003c= 2. Por tanto, el dominio físico es la intersección del rectángulo con x + 2y \u003c 10."
+        },
+        {
+          "paso": 5,
+          "descripcion": "Verificar si la restricción algebraica recorta la muestra.",
+          "desarrollo": "Dentro del rectángulo, el valor máximo de x + 2y ocurre en (3, 2), donde x + 2y = 7. Como 7 \u003c 10, todo el rectángulo cumple la condición. En este caso, el dominio contextual final es el rectángulo completo."
+        }
+      ],
+      "resultado": "Dominio algebraico: x + 2y \u003c 10. Dominio contextual final: 0 \u003c= x \u003c= 3 y 0 \u003c= y \u003c= 2.",
+      "verificacion": "La restricción física fue más fuerte que la algebraica dentro de la muestra.",
+      "transferencia": "En problemas de ingeniería, el dominio real casi siempre combina matemáticas y contexto."
+    }
+  ],
+  "graficos_y_representaciones": [
+    {
+      "id": "grafico_01_mapa_funcion",
+      "titulo": "Mapa de lectura de una función multivariable",
+      "proposito": "Mostrar cómo pasar de una expresión matemática a entradas, salida, dominio, rango y clasificación.",
+      "tipo": "Infografía de flujo",
+      "datos_o_relaciones": "Expresión -> entradas -> salida -> restricciones -> dominio -> rango -> tipo de función -> interpretación.",
+      "ubicacion_en_contenido": {
+        "seccion": "contenido_teorico_extenso",
+        "subtema": "La función como relación controlada entre entrada y salida",
+        "punto_insercion": "Después del primer subtema teórico, antes de funciones escalares.",
+        "proposito_lectura": "Ayudar al estudiante a aplicar siempre la misma ruta de lectura antes de calcular."
+      },
+      "nombre_imagen": "contenido_01_infografia_01_mapa_lectura_funcion.png",
+      "referencia_markdown_infografias": "contenido_01_infografias.md#infografia-1-mapa-de-lectura-de-una-funcion-multivariable",
+      "generacion": "Debe generarse con modelo de imagen."
+    },
+    {
+      "id": "grafico_02_comparacion_escalar_vectorial",
+      "titulo": "Comparación entre función escalar y función vectorial",
+      "proposito": "Diferenciar salida numérica y salida vectorial mediante ejemplos visuales.",
+      "tipo": "Matriz comparativa visual",
+      "datos_o_relaciones": "Función escalar: entrada (x, y), salida número, ejemplo T(x,y). Función vectorial: entrada (x, y), salida flecha, ejemplo V(x,y).",
+      "ubicacion_en_contenido": {
+        "seccion": "contenido_teorico_extenso",
+        "subtema": "Funciones escalares y funciones vectoriales",
+        "punto_insercion": "Después de explicar funciones vectoriales y antes de dominio.",
+        "proposito_lectura": "Evitar el error frecuente de clasificar por cantidad de variables de entrada."
+      },
+      "nombre_imagen": "contenido_01_infografia_02_escalar_vs_vectorial.png",
+      "referencia_markdown_infografias": "contenido_01_infografias.md#infografia-2-comparacion-entre-funcion-escalar-y-funcion-vectorial",
+      "generacion": "Debe generarse con modelo de imagen."
+    },
+    {
+      "id": "grafico_03_dominio_disco",
+      "titulo": "Dominio circular de una función con raíz cuadrada",
+      "proposito": "Visualizar el dominio x^2 + y^2 \u003c= 16 asociado a f(x,y)=sqrt(16-x^2-y^2).",
+      "tipo": "Diagrama plano con región sombreada",
+      "datos_o_relaciones": "Plano xy, círculo de radio 4, región interior sombreada, borde incluido.",
+      "ubicacion_en_contenido": {
+        "seccion": "problemas_resueltos",
+        "subtema": "Problema resuelto 1",
+        "punto_insercion": "Después del paso 4, antes de la interpretación.",
+        "proposito_lectura": "Conectar desigualdad algebraica con región geométrica."
+      },
+      "nombre_imagen": "contenido_01_grafico_01_dominio_disco.png",
+      "referencia_markdown_infografias": "contenido_01_infografias.md#infografia-3-dominio-circular-de-una-funcion-con-raiz-cuadrada",
+      "generacion": "Debe generarse con modelo de imagen."
+    },
+    {
+      "id": "grafico_04_campo_vectorial_basico",
+      "titulo": "Campo vectorial básico F(x,y)=(2x,-y)",
+      "proposito": "Mostrar que una función vectorial asigna una flecha a cada punto.",
+      "tipo": "Diagrama de campo vectorial",
+      "datos_o_relaciones": "Malla de puntos, flechas con componente horizontal 2x y vertical -y, ejes x e y.",
+      "ubicacion_en_contenido": {
+        "seccion": "problemas_resueltos",
+        "subtema": "Problema resuelto 2",
+        "punto_insercion": "Después del paso 3, antes de leer componentes.",
+        "proposito_lectura": "Visualizar salida vectorial como flecha y no como altura."
+      },
+      "nombre_imagen": "contenido_01_grafico_02_campo_vectorial_basico.png",
+      "referencia_markdown_infografias": "contenido_01_infografias.md#infografia-4-campo-vectorial-basico",
+      "generacion": "Debe generarse con modelo de imagen."
+    }
+  ],
+  "caso_o_aplicacion": {
+    "titulo": "Lectura inicial de modelos en una zona de estudio",
+    "situacion": "Un equipo recibe tres modelos preliminares para estudiar una región: T(x, y) para temperatura superficial, P(x, y, z) para presión aproximada en el subsuelo y V(x, y) para velocidad horizontal de flujo en una sección. Antes de calcular, el equipo debe clasificar cada modelo.",
+    "preguntas_guia": [
+      "¿Qué variables de entrada tiene cada modelo?",
+      "¿Qué salida produce?",
+      "¿Es función escalar o vectorial?",
+      "¿Qué restricciones algebraicas o físicas podrían aparecer?",
+      "¿Qué tipo de representación visual conviene: tabla, superficie, región, flechas o curva?"
+    ],
+    "transferencia": "El caso prepara al estudiante para leer modelos de ingeniería sin lanzarse de inmediato al cálculo."
+  },
+  "practica_guiada": {
+    "titulo": "Matriz de lectura de funciones",
+    "instrucciones_paso_a_paso": [
+      "Lee cada función sin resolver todavía ningún cálculo avanzado.",
+      "Escribe las variables de entrada.",
+      "Describe la salida: número, par ordenado, terna o vector.",
+      "Clasifica la función como escalar o vectorial.",
+      "Busca restricciones algebraicas básicas.",
+      "Agrega restricciones contextuales si el enunciado las menciona.",
+      "Redacta una interpretación en una frase.",
+      "Compara tu clasificación con la rúbrica de actividad."
+    ],
+    "funciones_para_practicar": [
+      "f(x, y) = x^2 + y^2",
+      "g(x, y) = ln(x + y)",
+      "H(x, y, z) = xz - y^2",
+      "F(x, y) = (x - y, x + y)",
+      "r(t) = (t, t^2, 1 - t)"
+    ],
+    "criterio_de_autochequeo": "Si la salida es un solo número, la función es escalar. Si la salida tiene componentes, es vectorial. Luego revisa dominio y contexto."
+  },
+  "actividad": {
+    "titulo": "Clasificación argumentada de funciones escalares y vectoriales",
+    "que_comprender": "Comprender que una función se lee por su entrada, salida, dominio, rango y sentido contextual.",
+    "que_hacer": "Clasificar cinco situaciones o expresiones como función escalar o vectorial. Para cada una, identificar variables de entrada, salida, dominio posible, restricción y una interpretación breve.",
+    "que_entregar": "Una tabla argumentada en Moodle con cinco filas, una por función o situación, y una conclusión de máximo dos párrafos sobre la diferencia entre salida escalar y salida vectorial.",
+    "como_entregarlo": "Subir el archivo en formato PDF o documento editable al espacio de entrega del Contenido 1. Si se usan gráficas o herramientas digitales, incluir captura y comentario propio.",
+    "para_que_sirve": "Esta actividad asegura que el estudiante sabe reconocer el tipo de objeto matemático antes de aplicar derivadas, gradientes, integrales o teoremas.",
+    "tiempo_estimado": "3 a 4 horas de trabajo autónomo."
+  },
+  "evidencia": {
+    "producto": "Tabla argumentada de clasificación de funciones.",
+    "componentes_obligatorios": [
+      "Nombre o expresión de la función.",
+      "Variables de entrada.",
+      "Tipo de salida.",
+      "Clasificación: escalar o vectorial.",
+      "Dominio posible.",
+      "Restricción algebraica o contextual.",
+      "Interpretación en lenguaje propio."
+    ],
+    "criterio_de_entrega": "La evidencia debe mostrar razonamiento, no solo respuestas cortas. Cada clasificación debe estar justificada."
+  },
+  "criterios_cualitativos": {
+    "criterio_principal_silabo": "Reconoce funciones escalares y vectoriales.",
+    "niveles": [
+      {
+        "nivel": "Sobresaliente",
+        "descriptor": "Clasifica correctamente todas las funciones, justifica entrada y salida, identifica dominios con precisión y propone interpretaciones claras y contextualizadas."
+      },
+      {
+        "nivel": "Muy bueno",
+        "descriptor": "Clasifica con claridad, identifica la mayoría de restricciones y explica la diferencia entre función escalar y vectorial con ejemplos adecuados."
+      },
+      {
+        "nivel": "Bueno",
+        "descriptor": "Diferencia funciones escalares y vectoriales, reconoce variables principales y propone dominios básicos con explicación suficiente."
+      },
+      {
+        "nivel": "Aceptable",
+        "descriptor": "Reconoce algunos casos, pero requiere apoyo para justificar dominio, rango o tipo de salida."
+      },
+      {
+        "nivel": "Insuficiente",
+        "descriptor": "Confunde entrada con salida o clasifica por cantidad de variables sin analizar la naturaleza de la salida."
+      },
+      {
+        "nivel": "Deficiente",
+        "descriptor": "No logra distinguir función escalar de función vectorial ni explicar restricciones básicas."
+      },
+      {
+        "nivel": "No acreditable",
+        "descriptor": "No entrega evidencia suficiente o la entrega no permite valorar el aprendizaje."
+      }
+    ],
+    "relacion_PL_GAP_007": "La evaluación es cualitativa, formativa y centrada en el resultado de aprendizaje. La retroalimentación debe indicar fortalezas, errores de clasificación, recomendaciones de repaso y siguiente paso."
+  },
+  "retroalimentacion": {
+    "fortalezas_a_reconocer": [
+      "Identificación clara de entradas y salidas.",
+      "Justificación correcta del tipo de función.",
+      "Uso de contexto para ajustar el dominio.",
+      "Explicación escrita comprensible."
+    ],
+    "errores_a_revisar": [
+      "Clasificar como vectorial toda función con dos variables.",
+      "Omitir restricciones de dominio.",
+      "Confundir gráfica tridimensional con salida vectorial.",
+      "No explicar unidades o sentido de las variables."
+    ],
+    "acciones_de_refuerzo": [
+      "Revisar la infografía de comparación escalar-vectorial.",
+      "Resolver nuevamente dos casos de práctica usando la matriz de lectura.",
+      "Participar en el foro de dudas con una función propia y su clasificación.",
+      "Consultar la sección de Stewart sobre funciones de varias variables."
+    ],
+    "siguiente_paso": "Prepararse para el Contenido 2, donde las funciones escalares de dos variables se interpretarán mediante dominios, superficies y curvas de nivel."
+  },
+  "cierre": {
+    "sintesis": "Una función de varias variables amplía la idea conocida de función: puede recibir dos, tres o más entradas. Si produce un número, es escalar; si produce componentes, es vectorial. El dominio indica dónde la función está definida y el rango indica qué salidas puede producir. En ingeniería, leer entradas, salidas y restricciones es tan importante como calcular.",
+    "transferencia": "Este aprendizaje será usado inmediatamente para representar dominios y superficies. Más adelante permitirá comprender gradiente, optimización, integrales múltiples, campos vectoriales e integrales de línea.",
+    "pregunta_reflexion": "Cuando recibes una fórmula nueva, ¿qué debes saber de ella antes de intentar derivarla o integrarla?",
+    "enlace_siguiente_contenido": "En el Contenido 2 estudiarás cómo se ven y se interpretan los dominios, superficies y curvas de nivel de funciones escalares de dos variables."
+  },
+  "plantilla_recomendada": {
+    "principal": "Visualización con Pestañas",
+    "justificacion": "El contenido requiere separar conceptos que el estudiante suele mezclar: entrada, salida, dominio, rango, función escalar y función vectorial. Una visualización por pestañas permite estudiar cada concepto de forma ordenada y volver a él sin perder el hilo.",
+    "uso_pedagogico": "La plantilla debe organizar pestañas como: 1. ¿Qué entra?, 2. ¿Qué sale?, 3. ¿Dónde está definida?, 4. ¿Escalar o vectorial?, 5. Ejemplos guiados, 6. Práctica.",
+    "como_ayuda_al_estudiante": "Reduce carga cognitiva, permite comparar conceptos y apoya la clasificación antes de resolver problemas.",
+    "componentes_que_deberia_activar": [
+      "Pestañas conceptuales.",
+      "Ejemplos visuales.",
+      "Preguntas de autochequeo.",
+      "Mini práctica interactiva.",
+      "Cierre con matriz de lectura."
+    ],
+    "secundarias": [
+      {
+        "plantilla": "Infografías",
+        "uso": "Explicar mapa de lectura, comparación escalar-vectorial y dominios básicos."
+      },
+      {
+        "plantilla": "Flash Card",
+        "uso": "Reforzar glosario: dominio, rango, escalar, vector, entrada y salida."
+      },
+      {
+        "plantilla": "Material Complementario",
+        "uso": "Ofrecer guía de lectura de Stewart y ejercicios de clasificación."
+      }
+    ]
+  },
+  "referencias_apa": [
+    {
+      "referencia": "Stewart, J. (s. f.). Cálculo de varias variables. Archivo local fuente_stewart_calculo_varias_variables.pdf.",
+      "nota": "Referencia provisional basada en el archivo suministrado. No se inventan datos editoriales adicionales."
+    },
+    {
+      "referencia": "MIT OpenCourseWare. (s. f.). 18.02SC Multivariable Calculus.",
+      "nota": "Fuente complementaria abierta para organización conceptual y recursos de autoestudio."
+    },
+    {
+      "referencia": "Paul's Online Notes. (s. f.). Calculus III.",
+      "nota": "Fuente complementaria abierta para práctica guiada y ejercicios."
+    }
+  ],
+  "control_calidad": {
+    "json_valido": "Pendiente de validación técnica posterior a la escritura.",
+    "aprendizaje_guiado": "Cumple: activa saber previo, orienta acción de estudio, propone práctica guiada, evidencia y cierre.",
+    "trazabilidad": "RA 1 -> S1 -> clasificación de funciones -> tabla argumentada -> rúbrica cualitativa.",
+    "graficos_planificados": 4,
+    "podcast_planificado": 1,
+    "no_genera_html_pdf_audio_imagen_final": true
+  }
+}</script>
+  <script>
+    const data = JSON.parse(document.getElementById('content-data').textContent);
+    const order = [
+      'metadatos', 'ubicacion_en_ruta', 'hilo_conductor', 'resultados_aprendizaje', 'saberes',
+      'momento_aprendizaje_guiado', 'introduccion', 'secuencia_explicativa', 'facilitadores_comprension',
+      'contenido_teorico_extenso', 'caso_o_aplicacion', 'practica_guiada',
+      'problemas_resueltos', 'actividad', 'evidencia', 'criterios_cualitativos', 'retroalimentacion',
+      'cierre', 'plantilla_recomendada', 'referencias_apa', 'control_calidad'
+    ];
+    const skipInMain = new Set(['plantillas_catalogo_disponibles', 'graficos_y_representaciones']);
+    const labels = {
+      metadatos: 'Metadatos', ubicacion_en_ruta: 'Ubicaci?n en la ruta', hilo_conductor: 'Hilo conductor',
+      resultados_aprendizaje: 'Resultados de aprendizaje', saberes: 'Saberes',
+      momento_aprendizaje_guiado: 'Momento de aprendizaje guiado', introduccion: 'Introducci?n',
+      secuencia_explicativa: 'Secuencia explicativa', facilitadores_comprension: 'Facilitadores de comprensi?n',
+      contenido_teorico_extenso: 'Contenido te?rico extenso', graficos_y_representaciones: 'Gr?ficos y representaciones',
+      caso_o_aplicacion: 'Caso o aplicaci?n', practica_guiada: 'Pr?ctica guiada', problemas_resueltos: 'Problemas resueltos',
+      actividad: 'Actividad', evidencia: 'Evidencia', criterios_cualitativos: 'Criterios cualitativos',
+      retroalimentacion: 'Retroalimentaci?n', cierre: 'Cierre', plantilla_recomendada: 'Plantilla recomendada',
+      referencias_apa: 'Referencias APA', control_calidad: 'Control de calidad'
+    };
+
+    const root = document.getElementById('content-root');
+    const toc = document.getElementById('toc');
+
+    function humanize(key) {
+      return labels[key] || key.replaceAll('_', ' ').replace(/^./, c => c.toUpperCase());
+    }
+    function slugify(text) {
+      return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    }
+    function escapeText(value) {
+      return String(value).replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+    }
+    function itemTitle(obj, fallback) {
+      if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return fallback;
+      return obj.titulo || obj.nombre || obj.codigo || obj.termino || obj.nivel || obj.id || fallback;
+    }
+    function renderGraphic(graphic) {
+      if (!graphic) return '';
+      const src = `imagenes_generadas/${escapeText(graphic.nombre_imagen)}`;
+      const purpose = graphic.ubicacion_en_contenido?.proposito_lectura || graphic.proposito || '';
+      return `<figure class="image-card inline-figure">
+        <a href="${src}" target="_blank" rel="noopener">
+          <img src="${src}" alt="${escapeText(graphic.titulo)}" loading="lazy">
+        </a>
+        <figcaption>
+          <strong>${escapeText(graphic.titulo)}</strong>
+          <span>${escapeText(purpose)}</span>
+        </figcaption>
+      </figure>`;
+    }
+    function matchingGraphic(section, namePart) {
+      return (data.graficos_y_representaciones || []).find(graphic =>
+        graphic.ubicacion_en_contenido?.seccion === section &&
+        graphic.nombre_imagen.includes(namePart)
+      );
+    }
+    function renderTheory(value) {
+      return `<div class="array">${value.map((item, idx) => {
+        const insertAfter = idx === 0
+          ? renderGraphic(matchingGraphic('contenido_teorico_extenso', '01_mapa_lectura'))
+          : idx === 3
+            ? renderGraphic(matchingGraphic('contenido_teorico_extenso', '02_escalar_vs_vectorial'))
+            : '';
+        return `<article class="card">
+          <h3 class="card-title">${escapeText(item.titulo)}</h3>
+          ${(item.desarrollo || []).map(paragraph => `<p class="paragraph scalar">${escapeText(paragraph)}</p>`).join('')}
+        </article>${insertAfter}`;
+      }).join('')}</div>`;
+    }
+    function renderProblem(problem, idx) {
+      const graphic = idx === 0
+        ? matchingGraphic('problemas_resueltos', 'dominio_disco')
+        : idx === 1
+          ? matchingGraphic('problemas_resueltos', 'campo_vectorial')
+          : null;
+      const insertAfterStep = idx === 0 ? 4 : idx === 1 ? 3 : -1;
+      const fields = Object.entries(problem)
+        .filter(([key]) => !['titulo', 'solucion_paso_a_paso'].includes(key))
+        .map(([key, value]) => `<div class="field"><p class="key">${humanize(key)}</p>${renderValue(value, key)}</div>`)
+        .join('');
+      const steps = (problem.solucion_paso_a_paso || []).map(step => {
+        const stepNumber = Number(step.paso);
+        return `<article class="card">
+          <h4 class="card-title">Paso ${escapeText(step.paso)}. ${escapeText(step.descripcion)}</h4>
+          <p class="paragraph scalar">${escapeText(step.desarrollo)}</p>
+        </article>${stepNumber === insertAfterStep ? renderGraphic(graphic) : ''}`;
+      }).join('');
+      return `<article class="card">
+        <h3 class="card-title">${escapeText(problem.titulo)}</h3>
+        <div class="obj">${fields}</div>
+        <div class="field">
+          <p class="key">Solución paso a paso</p>
+          <div class="array">${steps}</div>
+        </div>
+      </article>`;
+    }
+    function renderProblems(value) {
+      return `<div class="array">${value.map((problem, idx) => renderProblem(problem, idx)).join('')}</div>`;
+    }
+    function renderSectionContent(key, value) {
+      if (key === 'contenido_teorico_extenso') return renderTheory(value);
+      if (key === 'problemas_resueltos') return renderProblems(value);
+      return renderValue(value, key);
+    }
+    function renderValue(value, key = '') {
+      if (value === null || value === undefined || value === '') return '<span class="empty">Sin informaci?n</span>';
+      if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+        const text = escapeText(value);
+        if (typeof value === 'string' && value.length > 180) return `<p class="paragraph scalar">${text}</p>`;
+        return `<span class="scalar">${text}</span>`;
+      }
+      if (Array.isArray(value)) {
+        if (value.every(v => typeof v === 'string' || typeof v === 'number')) {
+          return `<ul class="array strings">${value.map(v => `<li>${escapeText(v)}</li>`).join('')}</ul>`;
+        }
+        return `<div class="array">${value.map((item, idx) => `
+          <article class="card">
+            ${typeof item === 'object' && item !== null ? `<h3 class="card-title">${escapeText(itemTitle(item, `${humanize(key)} ${idx + 1}`))}</h3>` : ''}
+            ${renderValue(item, key)}
+          </article>`).join('')}</div>`;
+      }
+      const entries = Object.entries(value);
+      if (!entries.length) return '<span class="empty">Sin informaci?n</span>';
+      return `<div class="obj">${entries.map(([k, v]) => {
+        const compact = typeof v === 'string' && v.length > 220;
+        return `<div class="field${compact ? ' compact' : ''}"><p class="key">${humanize(k)}</p>${renderValue(v, k)}</div>`;
+      }).join('')}</div>`;
+    }
+
+    const keys = [...order, ...Object.keys(data).filter(k => !order.includes(k))].filter(k => k in data && !skipInMain.has(k));
+    toc.innerHTML = keys.map((key, idx) => {
+      const title = humanize(key);
+      const id = slugify(title);
+      return `<a href="#${id}">${String(idx + 1).padStart(2, '0')}. ${title}</a>`;
+    }).join('');
+
+    root.innerHTML = keys.map((key, idx) => {
+      const title = humanize(key);
+      const id = slugify(title);
+      return `<section class="content-section" id="${id}">
+        <h2 class="section-title"><span class="index">${String(idx + 1).padStart(2, '0')}</span>${title}</h2>
+        ${renderSectionContent(key, data[key])}
+      </section>`;
+    }).join('');
+  </script>
+</body>
+</html>
+
