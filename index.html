@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contenido 01 - Funciones escalares y vectoriales</title>
+  <style>
+    .mwh-course {
+      --ua-green: #1A2403;
+      --ua-lime: #C8FF01;
+      --ua-yellow: #FFCE00;
+      --ua-white: #FFFFFF;
+      --ua-gray: #A7A9AA;
+      --ua-cyan: #00A4B5;
+      --ua-ink: #18210f;
+      --ua-muted: #5c6455;
+      --ua-soft: #f5f7f1;
+      --ua-border: #d7dbc9;
+      color: var(--ua-ink);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.55;
+      background: var(--ua-white);
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .mwh-course * {
+      box-sizing: border-box;
+    }
+
+    .mwh-course a {
+      color: #006d78;
+      font-weight: 700;
+    }
+
+    .mwh-hero {
+      position: relative;
+      min-height: 420px;
+      overflow: hidden;
+      border-radius: 8px;
+      background: var(--ua-green);
+      margin: 0 0 24px;
+    }
+
+    .mwh-hero img {
+      width: 100%;
+      height: 100%;
+      min-height: 420px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .mwh-hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(26, 36, 3, .94) 0%, rgba(26, 36, 3, .78) 42%, rgba(26, 36, 3, .28) 100%);
+    }
+
+    .mwh-hero-content {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-width: 720px;
+      padding: 36px;
+      color: var(--ua-white);
+    }
+
+    .mwh-kicker {
+      display: inline-flex;
+      width: fit-content;
+      gap: 8px;
+      align-items: center;
+      padding: 7px 10px;
+      border: 1px solid rgba(200, 255, 1, .55);
+      background: rgba(200, 255, 1, .12);
+      color: var(--ua-lime);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .mwh-hero h1 {
+      margin: 16px 0 12px;
+      font-size: clamp(32px, 5vw, 56px);
+      line-height: 1.04;
+      letter-spacing: 0;
+    }
+
+    .mwh-hero p {
+      max-width: 620px;
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .mwh-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .mwh-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 7px 10px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, .92);
+      color: var(--ua-green);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .mwh-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 2.1fr) minmax(280px, .9fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .mwh-section {
+      margin-bottom: 22px;
+      padding: 22px;
+      border: 1px solid var(--ua-border);
+      border-top: 5px solid var(--ua-green);
+      border-radius: 8px;
+      background: var(--ua-white);
+      box-shadow: 0 8px 22px rgba(26, 36, 3, .07);
+    }
+
+    .mwh-section.mwh-soft {
+      background: var(--ua-soft);
+    }
+
+    .mwh-section h2,
+    .mwh-section h3 {
+      margin: 0 0 12px;
+      line-height: 1.18;
+      letter-spacing: 0;
+      color: var(--ua-green);
+    }
+
+    .mwh-section h2 {
+      font-size: 28px;
+    }
+
+    .mwh-section h3 {
+      font-size: 20px;
+    }
+
+    .mwh-section p {
+      margin: 0 0 12px;
+    }
+
+    .mwh-section p:last-child,
+    .mwh-section ul:last-child,
+    .mwh-section ol:last-child {
+      margin-bottom: 0;
+    }
+
+    .mwh-cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .mwh-card {
+      padding: 16px;
+      border: 1px solid var(--ua-border);
+      border-left: 5px solid var(--ua-cyan);
+      border-radius: 8px;
+      background: var(--ua-white);
+    }
+
+    .mwh-card strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--ua-green);
+    }
+
+    .mwh-card p {
+      color: var(--ua-muted);
+      font-size: 15px;
+    }
+
+    .mwh-accordion {
+      display: grid;
+      gap: 12px;
+    }
+
+    .mwh-accordion details {
+      border: 1px solid var(--ua-border);
+      border-radius: 8px;
+      background: var(--ua-white);
+      overflow: hidden;
+    }
+
+    .mwh-accordion summary {
+      cursor: pointer;
+      padding: 15px 16px;
+      color: var(--ua-green);
+      font-weight: 800;
+      background: linear-gradient(90deg, rgba(200, 255, 1, .18), rgba(255, 255, 255, 1));
+    }
+
+    .mwh-detail-body {
+      padding: 16px;
+    }
+
+    .mwh-figure {
+      margin: 16px 0 0;
+      border: 1px solid var(--ua-border);
+      border-radius: 8px;
+      background: var(--ua-white);
+      overflow: hidden;
+    }
+
+    .mwh-figure img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .mwh-figure figcaption {
+      padding: 10px 12px;
+      color: var(--ua-muted);
+      font-size: 14px;
+      border-top: 1px solid var(--ua-border);
+      background: #fbfcf7;
+    }
+
+    .mwh-gallery {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .mwh-step-list {
+      counter-reset: step;
+      display: grid;
+      gap: 10px;
+      margin: 14px 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .mwh-step-list li {
+      counter-increment: step;
+      position: relative;
+      padding: 12px 12px 12px 48px;
+      border: 1px solid var(--ua-border);
+      border-radius: 8px;
+      background: var(--ua-white);
+    }
+
+    .mwh-step-list li::before {
+      content: counter(step);
+      position: absolute;
+      left: 12px;
+      top: 12px;
+      width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--ua-green);
+      color: var(--ua-lime);
+      font-weight: 800;
+    }
+
+    .mwh-callout {
+      padding: 16px;
+      border-left: 6px solid var(--ua-yellow);
+      border-radius: 8px;
+      background: #fff9d7;
+    }
+
+    .mwh-side {
+      display: grid;
+      gap: 16px;
+      position: sticky;
+      top: 12px;
+    }
+
+    .mwh-side .mwh-section {
+      margin-bottom: 0;
+      padding: 18px;
+    }
+
+    .mwh-resource-list {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .mwh-resource-list li {
+      padding: 12px;
+      border: 1px solid var(--ua-border);
+      border-radius: 8px;
+      background: var(--ua-white);
+    }
+
+    .mwh-resource-list span {
+      display: block;
+      color: var(--ua-muted);
+      font-size: 14px;
+    }
+
+    .mwh-media-frame {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      border: 1px solid var(--ua-border);
+      border-radius: 8px;
+      background: #eef2e6;
+    }
+
+    .mwh-video-frame {
+      aspect-ratio: 16 / 9;
+    }
+
+    .mwh-media-frame iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
+
+    .mwh-audio-frame {
+      padding: 12px;
+    }
+
+    .mwh-audio-frame audio {
+      width: 100%;
+    }
+
+    .mwh-check {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 16px;
+      padding-left: 18px;
+    }
+
+    .mwh-footer-note {
+      margin: 22px 0 0;
+      padding: 18px;
+      border-radius: 8px;
+      background: var(--ua-green);
+      color: var(--ua-white);
+    }
+
+    .mwh-footer-note strong {
+      color: var(--ua-lime);
+    }
+
+    @media (max-width: 860px) {
+      .mwh-grid,
+      .mwh-cards,
+      .mwh-gallery,
+      .mwh-check {
+        grid-template-columns: 1fr;
+      }
+
+      .mwh-side {
+        position: static;
+      }
+
+      .mwh-hero,
+      .mwh-hero img {
+        min-height: 520px;
+      }
+
+      .mwh-hero-content {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="mwh-course">
+    <!-- Ficha previa: concepto visual elegido: unidad_acordeones. Corresponde al primer contenido disciplinar porque organiza teoría extensa, subtemas comparables, apoyo visual, práctica y audio de repaso. Componentes: hero generado, acordeón de temas, infografía central, panel de recursos, audio, práctica, cierre. Imágenes generadas: banner y cuatro piezas descritas en contenido_01_infografias.md. Acciones del estudiante: estudiar conceptos, revisar gráficos, resolver taller, responder preguntas de control. -->
+    <section class="mwh-hero" aria-labelledby="mwh-title">
+      <img src="resources/contenido_01_banner_funciones_dominio_curvas.png" alt="Visual técnico con superficie, curvas de nivel y campo vectorial para introducir funciones en varias variables.">
+      <div class="mwh-hero-content">
+        <span class="mwh-kicker">Contenido 01 · Análisis Vectorial</span>
+        <h1 id="mwh-title">Funciones escalares y vectoriales en varias variables</h1>
+        <p>Aprende a reconocer qué entra en una función, qué sale de ella, dónde tiene sentido evaluarla y cómo leer sus curvas de nivel antes de calcular.</p>
+        <div class="mwh-meta" aria-label="Datos del recurso">
+          <span class="mwh-chip">Ingeniería de Petróleos</span>
+          <span class="mwh-chip">S1 · RA1 · CE1</span>
+          <span class="mwh-chip">Estudio autónomo: 3 a 4 horas</span>
+          <span class="mwh-chip">Tipo: unidad teórica con práctica guiada</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="mwh-grid">
+      <div>
+        <section class="mwh-section mwh-soft" aria-labelledby="mwh-start">
+          <h2 id="mwh-start">Punto De Partida</h2>
+          <p>Un equipo de ingeniería observa que una magnitud de interés varía según la ubicación en una región. Antes de calcular derivadas o integrales, necesita decidir qué variables describen la posición, qué puntos pertenecen al dominio, qué valores puede tomar la magnitud y cómo representar cambios mediante curvas de nivel.</p>
+          <div class="mwh-callout">
+            <strong>Pregunta guía:</strong> ¿Cómo reconocer qué tipo de función describe un fenómeno espacial y qué información ofrecen su dominio, rango y curvas de nivel?
+          </div>
+        </section>
+
+        <section class="mwh-section" aria-labelledby="mwh-outcomes">
+          <h2 id="mwh-outcomes">Lo Que Debes Lograr</h2>
+          <div class="mwh-cards">
+            <article class="mwh-card">
+              <strong>Clasificar</strong>
+              <p>Distinguir funciones escalares y vectoriales a partir del tipo de salida, no solo por la cantidad de variables.</p>
+            </article>
+            <article class="mwh-card">
+              <strong>Delimitar</strong>
+              <p>Determinar dominio y rango considerando restricciones algebraicas, geométricas y de contexto.</p>
+            </article>
+            <article class="mwh-card">
+              <strong>Interpretar</strong>
+              <p>Construir y leer curvas de nivel como conjuntos de puntos donde una función conserva un valor constante.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="mwh-section" aria-labelledby="mwh-visual">
+          <h2 id="mwh-visual">Mapa Visual Del Concepto</h2>
+          <p>Usa esta infografía como referencia rápida: el dominio se refiere a entradas válidas; el rango se refiere a salidas posibles.</p>
+          <figure class="mwh-figure">
+            <img src="resources/contenido_01_infografia_01_funcion_dominio_rango.png" alt="Diagrama que muestra cómo una función de varias variables toma entradas de un dominio, aplica una regla y produce salidas escalares o vectoriales que forman el rango.">
+            <figcaption>Función, dominio y rango: lectura inicial antes de clasificar, graficar o calcular.</figcaption>
+          </figure>
+        </section>
+
+        <section class="mwh-section" aria-labelledby="mwh-accordion">
+          <h2 id="mwh-accordion">Estudia Los Conceptos</h2>
+          <div class="mwh-accordion">
+            <details open>
+              <summary>1. Función de varias variables</summary>
+              <div class="mwh-detail-body">
+                <p>Una función de varias variables asigna una salida a cada punto de un conjunto de entradas. Si se escribe <strong>f(x, y)</strong>, la entrada está formada por dos valores y la salida suele ser un número. Puede representar elevación, temperatura, presión aproximada o concentración en una región.</p>
+                <p>La notación no es decorativa: indica que el valor depende de variables independientes. Cuando una cambia y la otra permanece fija, la salida puede cambiar de manera distinta.</p>
+              </div>
+            </details>
+            <details>
+              <summary>2. Función escalar y función vectorial</summary>
+              <div class="mwh-detail-body">
+                <p>Una <strong>función escalar</strong> devuelve un número real. Por ejemplo, <strong>f(x, y) = x^2 + y^2</strong> produce una magnitud no negativa para cada punto del plano.</p>
+                <p>Una <strong>función vectorial</strong> devuelve componentes. Por ejemplo, <strong>r(t) = (cos t, sen t, t)</strong> puede describir una trayectoria en el espacio.</p>
+                <div class="mwh-callout">La clasificación depende de la salida. Si la salida es un número, es escalar; si tiene componentes, es vectorial.</div>
+              </div>
+            </details>
+            <details>
+              <summary>3. Dominio y rango</summary>
+              <div class="mwh-detail-body">
+                <p>El <strong>dominio</strong> es el conjunto de entradas para las cuales la función está definida y tiene sentido. Puede limitarse por raíces pares, denominadores, logaritmos o condiciones físicas.</p>
+                <p>El <strong>rango</strong> es el conjunto de salidas posibles. La misma fórmula puede tener distinto rango si cambia el dominio.</p>
+              </div>
+            </details>
+            <details>
+              <summary>4. Cónicas y curvas de nivel</summary>
+              <div class="mwh-detail-body">
+                <p>Una curva de nivel aparece al fijar una función escalar en un valor constante: <strong>f(x, y) = c</strong>. Todos los puntos de esa curva comparten el mismo valor.</p>
+                <p>Las cónicas ayudan a reconocer formas: circunferencias, elipses, parábolas e hipérbolas pueden aparecer cuando se despejan las curvas de nivel.</p>
+              </div>
+            </details>
+          </div>
+        </section>
+
+        <section class="mwh-section" aria-labelledby="mwh-examples">
+          <h2 id="mwh-examples">Ejemplos Guiados</h2>
+          <div class="mwh-accordion">
+            <details>
+              <summary>Ejemplo 1: clasificación básica</summary>
+              <div class="mwh-detail-body">
+                <p><strong>Enunciado:</strong> clasifica <strong>f(x, y) = x^2 + y^2</strong> y <strong>r(t) = (cos t, sen t, t)</strong>.</p>
+                <ul>
+                  <li><strong>f</strong> recibe dos variables y devuelve un número real. Es una función escalar.</li>
+                  <li><strong>r</strong> recibe un parámetro y devuelve tres componentes. Es una función vectorial.</li>
+                </ul>
+                <p><strong>Resultado:</strong> f es escalar; r es vectorial.</p>
+              </div>
+            </details>
+            <details>
+              <summary>Ejemplo 2: dominio con raíz cuadrada</summary>
+              <div class="mwh-detail-body">
+                <p><strong>Enunciado:</strong> determina el dominio de <strong>f(x, y) = sqrt(16 - x^2 - y^2)</strong>.</p>
+                <ol class="mwh-step-list">
+                  <li>La raíz cuadrada exige que <strong>16 - x^2 - y^2 >= 0</strong>.</li>
+                  <li>Entonces <strong>x^2 + y^2 <= 16</strong>.</li>
+                  <li>La desigualdad describe un disco cerrado de radio 4 centrado en el origen.</li>
+                </ol>
+                <p><strong>Resultado:</strong> Dominio = {(x, y): x^2 + y^2 <= 16}.</p>
+              </div>
+            </details>
+            <details>
+              <summary>Ejemplo 3: curvas de nivel circulares</summary>
+              <div class="mwh-detail-body">
+                <p>Para <strong>f(x, y) = x^2 + y^2</strong>, fijar <strong>f(x, y) = c</strong> produce <strong>x^2 + y^2 = c</strong>. Para c = 1, 4 y 9 se obtienen circunferencias de radios 1, 2 y 3.</p>
+              </div>
+            </details>
+          </div>
+        </section>
+
+        <section class="mwh-section" aria-labelledby="mwh-problems">
+          <h2 id="mwh-problems">Problemas Resueltos</h2>
+
+          <article class="mwh-card">
+            <h3>Problema 1: dominio, rango y curvas de nivel de una magnitud radial</h3>
+            <p><strong>Enunciado:</strong> sea <strong>f(x, y) = 25 - x^2 - y^2</strong>. Clasifica la función, determina dominio, rango y curvas de nivel para c = 21, 16 y 9.</p>
+            <ol class="mwh-step-list">
+              <li>La salida es un número; por tanto, f es escalar.</li>
+              <li>Al ser polinómica, está definida para todo par real (x, y). Dominio: R^2.</li>
+              <li>Como x^2 + y^2 >= 0, f(x, y) <= 25. Rango: (-infinito, 25].</li>
+              <li>Fijar f(x, y) = c produce x^2 + y^2 = 25 - c.</li>
+              <li>Para c = 21, 16 y 9 se obtienen radios 2, 3 y 4.</li>
+            </ol>
+            <figure class="mwh-figure">
+              <img src="resources/contenido_01_grafico_01_curvas_nivel_radiales.png" alt="Plano xy con tres circunferencias concéntricas que representan niveles de f(x, y) = 25 - x² - y² para c igual a 21, 16 y 9.">
+              <figcaption>Al disminuir el valor de c, aumenta el radio de la curva de nivel.</figcaption>
+            </figure>
+            <p><strong>Interpretación:</strong> los puntos sobre una misma circunferencia comparten el mismo valor; la magnitud depende solo de la distancia al origen.</p>
+          </article>
+
+          <article class="mwh-card">
+            <h3>Problema 2: dominio físico y dominio matemático</h3>
+            <p><strong>Enunciado:</strong> una función simplificada <strong>g(x, y) = sqrt(100 - x^2 - y^2)</strong> representa una magnitud en una zona circular. Determina el dominio matemático y luego restringe al primer cuadrante.</p>
+            <ol class="mwh-step-list">
+              <li>La raíz exige <strong>100 - x^2 - y^2 >= 0</strong>.</li>
+              <li>El dominio matemático es <strong>x^2 + y^2 <= 100</strong>: disco cerrado de radio 10.</li>
+              <li>El primer cuadrante agrega <strong>x >= 0</strong> y <strong>y >= 0</strong>.</li>
+              <li>El dominio físico es {(x, y): x^2 + y^2 <= 100, x >= 0, y >= 0}.</li>
+            </ol>
+            <figure class="mwh-figure">
+              <img src="resources/contenido_01_grafico_02_dominio_fisico_matematico.png" alt="Comparación entre un disco completo como dominio matemático y un cuarto de disco en el primer cuadrante como dominio físico restringido por contexto.">
+              <figcaption>El contexto puede reducir el dominio que permite la fórmula.</figcaption>
+            </figure>
+          </article>
+
+          <article class="mwh-card">
+            <h3>Problema 3: curvas de nivel elípticas</h3>
+            <p><strong>Enunciado:</strong> sea <strong>h(x, y) = x^2/9 + y^2/4</strong>. Describe las curvas de nivel h(x, y) = 1, 4 y 9.</p>
+            <ol class="mwh-step-list">
+              <li>Fijar el nivel produce <strong>x^2/9 + y^2/4 = c</strong>.</li>
+              <li>Dividir por c produce <strong>x^2/(9c) + y^2/(4c) = 1</strong>.</li>
+              <li>El semieje en x es <strong>3 sqrt(c)</strong> y el semieje en y es <strong>2 sqrt(c)</strong>.</li>
+              <li>Para c = 1, 4 y 9 se obtienen semiejes (3, 2), (6, 4) y (9, 6).</li>
+            </ol>
+            <figure class="mwh-figure">
+              <img src="resources/contenido_01_grafico_03_curvas_nivel_elipticas.png" alt="Plano xy con tres elipses concéntricas que representan curvas de nivel de h(x, y) = x²/9 + y²/4 para c igual a 1, 4 y 9.">
+              <figcaption>Los semiejes crecen con la raíz cuadrada del nivel c.</figcaption>
+            </figure>
+          </article>
+        </section>
+
+        <section class="mwh-section" aria-labelledby="mwh-gallery">
+          <h2 id="mwh-gallery">Galería De Representaciones</h2>
+          <div class="mwh-gallery">
+            <figure class="mwh-figure">
+              <img src="resources/contenido_01_infografia_01_funcion_dominio_rango.png" alt="Diagrama de flujo de entrada, dominio, regla, salidas escalares o vectoriales y rango.">
+              <figcaption>Entrada, dominio, regla, salida y rango.</figcaption>
+            </figure>
+            <figure class="mwh-figure">
+              <img src="resources/contenido_01_grafico_01_curvas_nivel_radiales.png" alt="Tres circunferencias concéntricas para curvas de nivel radiales.">
+              <figcaption>Curvas de nivel radiales.</figcaption>
+            </figure>
+            <figure class="mwh-figure">
+              <img src="resources/contenido_01_grafico_02_dominio_fisico_matematico.png" alt="Dos paneles que comparan disco completo y cuarto de disco en primer cuadrante.">
+              <figcaption>Dominio matemático y dominio físico.</figcaption>
+            </figure>
+            <figure class="mwh-figure">
+              <img src="resources/contenido_01_grafico_03_curvas_nivel_elipticas.png" alt="Tres elipses concéntricas con semiejes crecientes.">
+              <figcaption>Curvas de nivel elípticas.</figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section class="mwh-section" aria-labelledby="mwh-practice">
+          <h2 id="mwh-practice">Taller Guiado</h2>
+          <p><strong>Producto:</strong> documento breve con procedimiento, gráficas o esquemas y explicación.</p>
+          <ol class="mwh-step-list">
+            <li>Selecciona tres funciones propuestas por el docente o el aula Moodle.</li>
+            <li>Identifica variables de entrada y tipo de salida.</li>
+            <li>Clasifica cada función como escalar o vectorial.</li>
+            <li>Determina el dominio matemático y describe su forma geométrica.</li>
+            <li>Si hay contexto, distingue dominio matemático y dominio físico.</li>
+            <li>Para una función escalar, elige tres valores constantes y construye curvas de nivel.</li>
+            <li>Escribe una interpretación breve de lo que significan esas curvas.</li>
+          </ol>
+        </section>
+
+        <section class="mwh-section" aria-labelledby="mwh-check">
+          <h2 id="mwh-check">Revisión Antes De Entregar</h2>
+          <ul class="mwh-check">
+            <li>Clasificas funciones por su salida.</li>
+            <li>Expresas el dominio en notación de conjuntos.</li>
+            <li>Describes la región geométrica del dominio.</li>
+            <li>Distingues dominio matemático y físico cuando aplica.</li>
+            <li>Fijas f(x, y) = c antes de construir curvas de nivel.</li>
+            <li>Incluyes interpretación, no solo resultados finales.</li>
+          </ul>
+        </section>
+
+        <section class="mwh-section mwh-soft" aria-labelledby="mwh-close">
+          <h2 id="mwh-close">Cierre</h2>
+          <p>En este contenido aprendiste a reconocer funciones escalares y vectoriales, determinar dominio y rango, y leer curvas de nivel como representación de valores constantes.</p>
+          <div class="mwh-callout">
+            <strong>Pregunta de reflexión:</strong> ¿Qué información perderías si usaras una fórmula sin revisar primero su dominio?
+          </div>
+          <p>En el contenido 2 estudiarás límites y continuidad. Para hacerlo necesitarás saber desde qué regiones y trayectorias te aproximas a un punto del dominio.</p>
+        </section>
+      </div>
+
+      <aside class="mwh-side" aria-label="Recursos complementarios del contenido">
+        <section class="mwh-section" aria-labelledby="mwh-route">
+          <h2 id="mwh-route">Ruta Rápida</h2>
+          <ul class="mwh-resource-list">
+            <li><strong>1. Observa</strong><span>Revisa la infografía central para separar dominio y rango.</span></li>
+            <li><strong>2. Estudia</strong><span>Abre los acordeones y compara función escalar, vectorial, dominio y curvas de nivel.</span></li>
+            <li><strong>3. Practica</strong><span>Resuelve los problemas y usa las gráficas como verificación.</span></li>
+            <li><strong>4. Entrega</strong><span>Prepara el taller con procedimiento, diagramas e interpretación.</span></li>
+          </ul>
+        </section>
+
+        <section class="mwh-section" aria-labelledby="mwh-podcast">
+          <h2 id="mwh-podcast">Podcast De Repaso</h2>
+          <p><strong>Funciones, dominio y curvas de nivel: aprender a leer el mapa antes de calcular.</strong></p>
+          <p>Duración sugerida: 8 a 10 minutos.</p>
+          <div class="mwh-media-frame mwh-audio-frame">
+            <audio controls preload="none" aria-label="Podcast de repaso sobre funciones, dominio y curvas de nivel">
+              <source data-src-pendiente="contenido_01_podcast.mp3" type="audio/mpeg">
+            </audio>
+          </div>
+          <!-- EDITOR MOODLE: reemplazar data-src-pendiente por src cuando el audio esté cargado. -->
+          <details>
+            <summary>Preguntas de escucha</summary>
+            <div class="mwh-detail-body">
+              <ol>
+                <li>¿Por qué una función con varias variables no necesariamente es vectorial?</li>
+                <li>¿Qué diferencia hay entre dominio matemático y dominio físico?</li>
+                <li>¿Por qué el rango puede cambiar si cambia el dominio?</li>
+                <li>¿Qué significa fijar f(x, y) = c?</li>
+                <li>¿Cómo ayudan las cónicas a interpretar curvas de nivel?</li>
+              </ol>
+            </div>
+          </details>
+        </section>
+
+        <section class="mwh-section" aria-labelledby="mwh-video">
+          <h2 id="mwh-video">Video De Apoyo</h2>
+          <p>Observa la relación entre superficie, dominio y curvas de nivel antes de iniciar el taller.</p>
+          <div class="mwh-media-frame mwh-video-frame">
+            <iframe title="Video de apoyo: funciones de varias variables y curvas de nivel" src="about:blank" data-src-pendiente="contenido_01_video_apoyo.mp4" loading="lazy" allowfullscreen></iframe>
+          </div>
+          <!-- EDITOR MOODLE: reemplazar src por la URL o archivo de video del contenido 01. -->
+        </section>
+
+        <section class="mwh-section" aria-labelledby="mwh-resources">
+          <h2 id="mwh-resources">Recursos Para Estudiar</h2>
+          <ul class="mwh-resource-list">
+            <li><strong>Sílabo de Análisis Vectorial</strong><span>Identifica S1, RA1 y CE1 para ubicar el alcance del contenido.</span></li>
+            <li><strong>Stewart, Cálculo de varias variables</strong><span>Revisa representaciones verbales, algebraicas, numéricas y visuales.</span></li>
+            <li><strong>Infografías del contenido</strong><span>Úsalas para verificar dominio, rango y curvas de nivel durante la práctica.</span></li>
+          </ul>
+        </section>
+
+        <section class="mwh-section" aria-labelledby="mwh-errors">
+          <h2 id="mwh-errors">Errores Frecuentes</h2>
+          <ul>
+            <li>Decir que una función es vectorial solo porque tiene x e y.</li>
+            <li>Olvidar restricciones de contexto al determinar el dominio.</li>
+            <li>Confundir dominio con rango.</li>
+            <li>Dibujar curvas de nivel sin fijar primero un valor constante.</li>
+            <li>Usar una gráfica digital sin explicar qué representa cada eje.</li>
+          </ul>
+        </section>
+      </aside>
+    </div>
+
+    <section class="mwh-section" aria-labelledby="mwh-refs">
+      <h2 id="mwh-refs">Referencias</h2>
+      <ul>
+        <li>Sílabo de Análisis Vectorial. (2025). Fundación Universidad de América. Documento suministrado por el usuario.</li>
+        <li>Stewart, J. (s. f.). <em>Cálculo de varias variables: Trascendentes tempranas</em>. Fuente suministrada por el usuario.</li>
+      </ul>
+    </section>
+
+    <div class="mwh-footer-note">
+      <strong>Mensaje clave:</strong> antes de calcular, lee la función: identifica entradas, salida, dominio, rango y curvas de nivel.
+    </div>
+
+    <!-- Source map: curso_virtual/05_contenidos/contenido_01_funciones_escalares_vectoriales/contenido_01.json; contenido_01_infografias.md; contenido_01_podcast.md. Assumptions: HTML Moodle-safe with embedded scoped CSS, no external scripts, media audio/video left as Moodle editor mounting points. QA: relative image paths, alt text present, responsive grid, accordion by native details/summary. -->
+  </main>
+</body>
+</html>
